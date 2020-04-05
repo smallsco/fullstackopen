@@ -1,0 +1,47 @@
+note over browser:
+User clicks "Save" with the text
+"foobarbaz" in the note field. A
+POST request is initiated with the
+following form data in its body:
+note=foobarbaz
+end note
+browser->server: HTTP POST https://fullstack-exampleapp.herokuapp.com/new_note
+
+note over server:
+server appends the note and the
+current timestamp to data.json
+end note
+server-->browser: 302 Found /notes
+
+note over browser:
+browser interprets 302 Found response
+and reloads the /notes URL
+end note
+
+browser->server: HTTP GET https://fullstack-exampleapp.herokuapp.com/notes
+server-->browser: HTML-code
+browser->server: HTTP GET https://fullstack-exampleapp.herokuapp.com/main.css
+server-->browser: main.css
+browser->server: HTTP GET https://fullstack-exampleapp.herokuapp.com/main.js
+server-->browser: main.js
+
+note over browser:
+browser starts executing js-code
+that requests JSON data from server 
+end note
+
+browser->server: HTTP GET https://fullstack-exampleapp.herokuapp.com/data.json
+
+note over server:
+notice that data.json
+contains the new note
+at the end of the file
+end note
+
+server-->browser: [..., { content: "foobarbaz", date: "2020-04-04" }]
+
+note over browser:
+browser executes the event handler
+that renders notes to display, including
+the newly-created note
+end note

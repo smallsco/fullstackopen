@@ -1,0 +1,24 @@
+note over browser:
+1. User clicks "Save" with the text "asdf" in the
+note field.
+2. The default behavior of the save button is
+suppressed.
+3. The current timestamp is captured, and
+serialized to JSON alongside the new note text:
+{content: "asdf", date: "2020-04-05T00:08:37.840Z"}
+4. The new note and date are added to the notes
+array.
+5. The redrawNotes() function is called, which
+removes all existing notes from the DOM and then
+adds them back from the notes array.
+6. The sendToServer() function is called, which
+initiates a POST request using the serialized JSON
+to save the new note to the server.
+end note
+browser->server: HTTP POST https://fullstack-exampleapp.herokuapp.com/new_note_spa
+
+note over server:
+server appends the note and the
+provided timestamp to data.json
+end note
+server-->browser: {"message":"note created"}
