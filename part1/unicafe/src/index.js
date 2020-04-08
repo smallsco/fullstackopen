@@ -7,16 +7,23 @@ const Statistics = (props) => {
   const average = (good + (-1*bad))/total
   const positive_percentage = (good / total) * 100
 
-  return (
-    <>
-      Good: {good}<br />
-      Neutral: {neutral}<br />
-      Bad: {bad}<br />
-      Total: {total}<br />
-      Average: {average}<br />
-      Positive: {positive_percentage}%
-    </>
-  )
+  if (total <= 0) {
+    return (
+      <p>No Feedback Given</p>
+    )
+  }
+  else {
+    return (
+      <>
+        Good: {good}<br />
+        Neutral: {neutral}<br />
+        Bad: {bad}<br />
+        Total: {total}<br />
+        Average: {average}<br />
+        Positive: {positive_percentage}%
+      </>
+    )
+  }
 }
 
 const App = () => {
