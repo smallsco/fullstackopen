@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import Filter from './components/Filter'
+import Notification from './components/Notification'
 import PersonForm from './components/PersonForm'
 import PersonList from './components/PersonList'
 import personService from './services/persons'
@@ -9,6 +10,7 @@ const App = () => {
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [nameFilter, setNameFilter] = useState('')
+  const [notificationMessage, setNotificationMessage] = useState(null)
 
   useEffect(() => {
     personService.getAll().then(data => setPersons(data))
@@ -20,15 +22,27 @@ const App = () => {
     const existingPerson = persons.find(person => person.name === newName)
     if (existingPerson) {
       if (window.confirm(`${existingPerson.name} is already added to the phonebook, replace the old number with a new one?`)) {
-        personService.update(newPerson, existingPerson.id).then(updatedPerson =>
+        personService.update(newPerson, existingPerson.id).then(updatedPerson => {
           setPersons(persons.map(person => person.id !== existingPerson.id ? person : updatedPerson))
-        )
+          setNotificationMessage(
+            `Updated ${newName}`
+          )
+          setTimeout(() => {
+            setNotificationMessage(null)
+          }, 5000)
+        })
       }
     }
     else {
-      personService.create(newPerson).then(newPersonWithId =>
+      personService.create(newPerson).then(newPersonWithId => {
         setPersons(persons.concat(newPersonWithId))
-      )
+        setNotificationMessage(
+          `Added ${newName}`
+        )
+        setTimeout(() => {
+          setNotificationMessage(null)
+        }, 5000)
+      })
     }
     setNewName('')
     setNewNumber('')
@@ -55,6 +69,7 @@ const App = () => {
   return (
     <div>
       <h1>Phonebook</h1>
+      <Notification message={notificationMessage} />
       <Filter onChange={onChangeNameFilter} />
       <h2>Add New</h2>
       <PersonForm
