@@ -41,6 +41,14 @@ const App = () => {
     setNewNumber(event.target.value)
   }
 
+  const onDelete = (personToDelete) => {
+    if (window.confirm(`Delete ${personToDelete.name}?`)) {
+      personService.deletePerson(personToDelete.id).then(
+        setPersons(persons.filter(person => person.id !== personToDelete.id))
+      )
+    }
+  }
+
   return (
     <div>
       <h1>Phonebook</h1>
@@ -54,7 +62,11 @@ const App = () => {
         onAdd={onAdd}
       />
       <h2>Numbers</h2>
-      <PersonList persons={persons} nameFilter={nameFilter} />
+      <PersonList
+        persons={persons}
+        nameFilter={nameFilter}
+        onDelete={onDelete}
+      />
     </div>
   )
 }
