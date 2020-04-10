@@ -6,9 +6,15 @@ import Filter from './components/Filter'
 const App = () => {
   const [countryList, setCountryList] = useState([])
   const [countryFilter, setCountryFilter] = useState('')
+  const [showCountry, setShowCountry] = useState()
 
   const onSearchCountry = (event) => {
     setCountryFilter(event.target.value)
+    setShowCountry()
+  }
+
+  const onShowCountry = (country) => {
+    setShowCountry(country)
   }
 
   useEffect(() => {
@@ -20,7 +26,12 @@ const App = () => {
   return (
     <div>
       <Filter onChange={onSearchCountry} />
-      <CountryList countries={countryList} countryFilter={countryFilter} />
+      <CountryList
+        countries={countryList}
+        countryFilter={countryFilter}
+        showCountry={showCountry}
+        onShowCountry={onShowCountry}
+      />
     </div>
   )
 }
