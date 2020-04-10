@@ -11,6 +11,7 @@ const App = () => {
   const [newNumber, setNewNumber] = useState('')
   const [nameFilter, setNameFilter] = useState('')
   const [notificationMessage, setNotificationMessage] = useState(null)
+  const [errorMessage, setErrorMessage] = useState(null)
 
   useEffect(() => {
     personService.getAll().then(data => setPersons(data))
@@ -22,7 +23,8 @@ const App = () => {
     const existingPerson = persons.find(person => person.name === newName)
     if (existingPerson) {
       if (window.confirm(`${existingPerson.name} is already added to the phonebook, replace the old number with a new one?`)) {
-        personService.update(newPerson, existingPerson.id).then(updatedPerson => {
+        personService
+        .update(newPerson, existingPerson.id).then(updatedPerson => {
           setPersons(persons.map(person => person.id !== existingPerson.id ? person : updatedPerson))
           setNotificationMessage(
             `Updated ${newName}`
@@ -30,6 +32,15 @@ const App = () => {
           setTimeout(() => {
             setNotificationMessage(null)
           }, 5000)
+        })
+        .catch(error => {
+          setErrorMessage(
+            `Information of ${newName} has already been removed from the server`
+          )
+          setTimeout(() => {
+            setErrorMessage(null)
+          }, 5000)
+          setPersons(persons.filter(person => person.id !== existingPerson.id))
         })
       }
     }
@@ -69,7 +80,8 @@ const App = () => {
   return (
     <div>
       <h1>Phonebook</h1>
-      <Notification message={notificationMessage} />
+      <Notification type='error' message={errorMessage} />
+      <Notification type='success' message={notificationMessage} />
       <Filter onChange={onChangeNameFilter} />
       <h2>Add New</h2>
       <PersonForm
