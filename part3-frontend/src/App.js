@@ -14,7 +14,15 @@ const App = () => {
   const [errorMessage, setErrorMessage] = useState(null)
 
   useEffect(() => {
-    personService.getAll().then(data => setPersons(data))
+    personService
+      .getAll()
+      .then(data => setPersons(data))
+      .catch(error => {
+        setErrorMessage(error.response.data.error)
+        setTimeout(() => {
+          setErrorMessage(null)
+        }, 5000)
+      })
   }, [])
 
   const onAdd = (event) => {
@@ -53,6 +61,11 @@ const App = () => {
         setTimeout(() => {
           setNotificationMessage(null)
         }, 5000)
+      }).catch(error => {
+        setErrorMessage(error.response.data.error)
+        setTimeout(() => {
+          setErrorMessage(null)
+        }, 5000)
       })
     }
     setNewName('')
@@ -71,9 +84,17 @@ const App = () => {
 
   const onDelete = (personToDelete) => {
     if (window.confirm(`Delete ${personToDelete.name}?`)) {
-      personService.deletePerson(personToDelete.id).then(
-        setPersons(persons.filter(person => person.id !== personToDelete.id))
-      )
+      personService
+        .deletePerson(personToDelete.id)
+        .then(
+          setPersons(persons.filter(person => person.id !== personToDelete.id))
+        )
+        .catch(error => {
+          setErrorMessage(error.response.data.error)
+          setTimeout(() => {
+            setErrorMessage(null)
+          }, 5000)
+        })
     }
   }
 
