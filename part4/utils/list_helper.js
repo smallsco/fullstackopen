@@ -1,3 +1,6 @@
+// Third-Party Imports
+const _ = require('lodash')
+
 // Always returns 1.
 const dummy = blogs => 1
 
@@ -23,9 +26,22 @@ const favouriteBlog = blogs => {
   return favourite
 }
 
+// Given a list of blogs, return the author with the largest amount
+const mostBlogs = blogs => {
+  if (blogs.length === 0) return null
+  const authorCounts = _.countBy(blogs, blog => blog.author)
+  return _.reduce(authorCounts, (max, numBlogs, author) => {
+    if (numBlogs > max.blogs) {
+      max.blogs = numBlogs
+      max.author = author
+    }    
+    return max
+  }, {'blogs': 0, 'author': ''})
+}
 
 module.exports = {
   dummy,
   totalLikes,
-  favouriteBlog
+  favouriteBlog,
+  mostBlogs
 }
