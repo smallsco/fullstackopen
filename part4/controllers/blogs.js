@@ -12,6 +12,13 @@ blogsRouter.get('/', async (request, response) => {
 
 // Add new blog
 blogsRouter.post('/', async (request, response) => {
+  if (!request.body.hasOwnProperty('title')) {
+    return response.status(400).json({error: "Missing title property"})
+  }
+  if (!request.body.hasOwnProperty('url')) {
+    return response.status(400).json({error: "Missing url property"})
+  }
+
   const blog = new Blog({
     title: request.body.title,
     author: request.body.author,
