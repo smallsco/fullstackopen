@@ -7,7 +7,7 @@ const Blog = require('../models/blog')
 // List all blogs
 blogsRouter.get('/', async (request, response) => {
   const blogs = await Blog.find({})
-  return response.json(blogs)
+  return response.json(blogs.map(blog => blog.toJSON()))
 })
 
 // Add new blog
