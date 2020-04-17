@@ -22,7 +22,10 @@ describe('list all blogs endpoint', () => {
 
   // also implies the amount of blogs are correct
   test('the blogs contain the fixture data', async () => {
-    const response = await api.get('/api/blogs')
+    const response = await api
+      .get('/api/blogs')
+      .expect(200)
+      .expect('Content-Type', /application\/json/)
 
     const body = response.body.map(blog => {
       delete blog.id
@@ -38,6 +41,35 @@ describe('list all blogs endpoint', () => {
     response.body.forEach(blog => {
       expect(blog.id).toBeDefined()
     })
+  })
+})
+
+describe('add new blog endpoint', () => {
+
+  test('can add a new blog', async () => {
+    // Add new blog
+    const newBlog = {
+      title: 'A New Blog',
+      author: 'Carolin',
+      url: 'http://www.fullstackopen.com',
+      likes: 3
+    }
+    const post_response = await api
+      .post('/api/blogs')
+      .send(newBlog)
+      .expect(201)
+      .expect('Content-Type', /application\/json/)
+
+    // Make sure it got an ID assigned
+    expect(post_response.body.id).toBeDefined()
+
+    // Remove the ID and make sure the rest of the properties have the right data
+    delete post_response.body.id
+    expect(post_response.body).toEqual(newBlog)
+
+    // Verify that the total number of blogs has increased by 1
+    const get_response = await api.get('/api/blogs')
+    expect(get_response.body.length).toEqual(helper.blogFixtures.length + 1)
   })
 })
 
