@@ -11,6 +11,7 @@ const blogsRouter = require('./controllers/blogs')
 
 // Connect to DB
 mongoose.connect(config.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+mongoose.set('useFindAndModify', false)
 
 // Middleware
 app.use(cors())
