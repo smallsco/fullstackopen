@@ -155,6 +155,84 @@ describe('delete blog endpoint', () => {
   })
 })
 
+describe('update blog endpoint', () => {
+
+  test('can update an existing blog', async () => {
+    const blogsAtStart = await helper.blogsInDb()
+
+    const newBlog = {
+      title: 'An updated blog',
+      author: 'William',
+      url: 'http://www.bing.com',
+      likes: 100,
+    }
+    const response = await api.put('/api/blogs/' + blogsAtStart[0].id).send(newBlog)
+
+    // Make sure it uses the existing ID
+    expect(response.body.id).toBe(blogsAtStart[0].id)
+
+    // Remove the ID and make sure the rest of the properties have the right data
+    delete response.body.id
+    expect(response.body).toEqual(newBlog)
+
+    // the number of blogs in the system is unchanged
+    const blogsAtEnd = await helper.blogsInDb()
+    expect(blogsAtEnd.length).toBe(blogsAtStart.length)
+
+    // the old blog was overwritten
+    delete blogsAtEnd[0].id
+    expect(blogsAtEnd[0]).toEqual(newBlog)
+  })
+
+  test('cannot update an existing blog without a title', async () => {
+    const blogsAtStart = await helper.blogsInDb()
+
+    // attempting to add a blog without a title returns a 400 response
+    const newBlog = {
+      author: 'Joe',
+      url: 'http://www.google.com'
+    }
+    const response = await api.put('/api/blogs/' + blogsAtStart[0].id).send(newBlog)
+
+    // Make sure the user got an error message
+    expect(response.body.error).toBeDefined()
+
+    // the number of blogs in the system is unchanged
+    const blogsAtEnd = await helper.blogsInDb()
+    expect(blogsAtEnd.length).toBe(blogsAtStart.length)
+  })
+
+  test('cannot update an existing blog without a url', async () => {
+    const blogsAtStart = await helper.blogsInDb()
+
+    // attempting to update a blog without a title returns a 400 response
+    const newBlog = {
+      title: 'This should fail',
+      author: 'Joe'
+    }
+    const response = await api.put('/api/blogs/' + blogsAtStart[0].id).send(newBlog)
+
+    // Make sure the user got an error message
+    expect(response.body.error).toBeDefined()
+
+    // the number of blogs in the system is unchanged
+    const blogsAtEnd = await helper.blogsInDb()
+    expect(blogsAtEnd.length).toBe(blogsAtStart.length)
+  })
+
+  test('can update an existing blog without likes and they default to 0', async () => {
+    const blogsAtStart = await helper.blogsInDb()
+    const newBlog = {
+      title: 'Another New Blog',
+      author: 'Jared',
+      url: 'http://www.example.com'
+    }
+    const response = await api.put('/api/blogs/' + blogsAtStart[0].id).send(newBlog)
+
+    expect(response.body.likes).toBe(0)
+  })
+})
+
 afterAll(() => {
   mongoose.connection.close()
 })
