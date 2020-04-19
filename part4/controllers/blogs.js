@@ -3,10 +3,11 @@ const blogsRouter = require('express').Router()
 
 // My Imports
 const Blog = require('../models/blog')
+const User = require('../models/user')
 
 // List all blogs
 blogsRouter.get('/', async (request, response) => {
-  const blogs = await Blog.find({})
+  const blogs = await Blog.find({}).populate('user', { username: 1, name: 1 })
   return response.json(blogs.map(blog => blog.toJSON()))
 })
 
@@ -19,14 +20,24 @@ blogsRouter.post('/', async (request, response) => {
     return response.status(400).json({error: "Missing url property"})
   }
 
+  const allUsers = await User.find({})
+  const firstUser = allUsers[0]
+
+  // Add the blog
   const blog = new Blog({
     title: request.body.title,
     author: request.body.author,
     url: request.body.url,
-    likes: request.body.likes === undefined ? 0 : request.body.likes
+    likes: request.body.likes === undefined ? 0 : request.body.likes,
+    user: firstUser._id
   })
-  const result = await blog.save()
-  return response.status(201).json(result)
+  const savedBlog = await blog.save()
+
+  // Add the blog's ID to the user
+  firstUser.blogs = firstUser.blogs.concat(savedBlog._id)
+  await firstUser.save()
+
+  return response.status(201).json(savedBlog)
 })
 
 // Delete a blog
