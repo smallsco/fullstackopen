@@ -1,12 +1,14 @@
 // Third-Party Imports
 const mongoose = require('mongoose')
+const uniqueValidator = require('mongoose-unique-validator')
 
 // Schema Definition
 const userSchema = mongoose.Schema({
-  username: String,
+  username: { type: String, minlength: 3, required: true, unique: true },
   name: String,
   passwordHash: String
 })
+userSchema.plugin(uniqueValidator)
 userSchema.set('toJSON', {
   transform: (document, returnedObject) => {
     returnedObject.id = returnedObject._id.toString()

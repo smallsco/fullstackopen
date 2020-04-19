@@ -13,6 +13,16 @@ usersRouter.get('/', async (request, response) => {
 
 // Add new user
 usersRouter.post('/', async (request, response) => {
+
+  // Username is validated by Mongoose.
+  // Password must be validated here (Mongoose only gets the hash)
+  if (!request.body.hasOwnProperty('password')) {
+    return response.status(400).json({error: "Please provide a password"})
+  }
+  if (request.body.password.length < 3) {
+    return response.status(400).json({ error: "Password must be at least 3 characters" })
+  }
+
   const saltRounds = 10
   const passwordHash = await bcrypt.hash(request.body.password, saltRounds)
 
