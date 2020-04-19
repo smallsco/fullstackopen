@@ -1,3 +1,6 @@
+// My Dependencies
+const Blog = require('../models/blog')
+
 const blogFixtures = [
   {
     "title": "My First Blog",
