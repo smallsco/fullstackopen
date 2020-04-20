@@ -13,23 +13,13 @@ blogsRouter.get('/', async (request, response) => {
   return response.json(blogs.map(blog => blog.toJSON()))
 })
 
-// JWT Helper
-const getTokenFrom = request => {
-  const authorization = request.get('authorization')
-  if (authorization && authorization.toLowerCase().startsWith('bearer ')) {
-    return authorization.substring(7)
-  }
-  return null
-}
-
 // Add new blog
 blogsRouter.post('/', async (request, response) => {
 
   // Ensure a valid token is provided
   // Note: missing or invalid tokens raise exceptions and so the errors are
   // returned by the middleware
-  const token = getTokenFrom(request)
-  const decodedToken = jwt.verify(token, config.JWT_SECRET)
+  const decodedToken = jwt.verify(request.token, config.JWT_SECRET)
 
   // Validate input
   if (!request.body.hasOwnProperty('title')) {

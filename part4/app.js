@@ -20,6 +20,7 @@ mongoose.set('useFindAndModify', false)
 // Pre-Routing Middleware
 app.use(cors())
 app.use(express.json())
+app.use(middleware.tokenExtractor)
 
 // Routes
 app.use('/api/blogs', blogsRouter)
