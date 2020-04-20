@@ -51,8 +51,25 @@ blogsRouter.post('/', async (request, response) => {
 
 // Delete a blog
 blogsRouter.delete('/:id', async (request, response) => {
-  await Blog.findByIdAndRemove(request.params.id)
-  return response.status(204).end()
+
+  // Ensure a valid token is provided
+  const decodedToken = jwt.verify(request.token, config.JWT_SECRET)
+
+  // Look up the blog to delete
+  const blogToRemove = await Blog.findById(request.params.id)
+  if (!blogToRemove) {
+    return response.status(400).json({error: "Invalid blog ID"})
+  }
+
+  if (blogToRemove.user.toString() === decodedToken.id.toString()) {
+    // If the current user and blog user are the same allow deletion to proceed
+    await Blog.findByIdAndRemove(request.params.id)
+    return response.status(204).end()
+  }
+  else {
+    // If not then throw an error
+    return response.status(400).json({error: "Only the user who posted the blog can delete it"})
+  }
 })
 
 // Update an existing blog's like count
