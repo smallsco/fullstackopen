@@ -37,4 +37,31 @@ const addBlog = async (blog) => {
   }
 }
 
-export default { getAll, addBlog, setToken }
+const likeBlog = async (blog) => {
+  try {
+    const newBlog = {
+      author: blog.author,
+      title: blog.title,
+      url: blog.url,
+      user: blog.user._id,
+      likes: blog.likes + 1
+    }
+    const response = await axios.put(`${baseUrl}/${blog.id}`, newBlog)
+    return response.data
+  }
+  catch (error) {
+    if (error.response.data.error) {
+      // backend returns errors as json
+      return error.response.data
+    }
+    else if (error.response.data) {
+      // handle proxy errors which are returned by strings
+      return {error: error.response.data}
+    }
+    else {
+      return {error: "Unknown error occurred during like blog. Check backend logs."}
+    }
+  }
+}
+
+export default { getAll, addBlog, likeBlog, setToken }
