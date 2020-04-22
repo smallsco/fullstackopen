@@ -37,6 +37,7 @@ const addBlog = async (blog) => {
   }
 }
 
+// Like a blog
 const likeBlog = async (blog) => {
   try {
     const newBlog = {
@@ -64,4 +65,28 @@ const likeBlog = async (blog) => {
   }
 }
 
-export default { getAll, addBlog, likeBlog, setToken }
+// Delete a blog
+const deleteBlog = async (id) => {
+  try {
+    const config = {
+      headers: { Authorization: token },
+    }
+    const response = await axios.delete(`${baseUrl}/${id}`, config)
+    return response.data
+  }
+  catch (error) {
+    if (error.response.data.error) {
+      // backend returns errors as json
+      return error.response.data
+    }
+    else if (error.response.data) {
+      // handle proxy errors which are returned by strings
+      return {error: error.response.data}
+    }
+    else {
+      return {error: "Unknown error occurred during delete blog. Check backend logs."}
+    }
+  }
+}
+
+export default { getAll, addBlog, likeBlog, deleteBlog, setToken }

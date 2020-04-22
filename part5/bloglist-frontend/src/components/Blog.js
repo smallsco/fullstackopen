@@ -1,7 +1,7 @@
 // Third-Party Imports
 import React, { useState } from 'react'
 
-const Blog = ({ blog, blogService, setErrorMessage }) => {
+const Blog = ({ blog, blogService, loggedInUser, onDelete, setErrorMessage }) => {
 
   // Blog appearance
   const blogStyle = {
@@ -50,6 +50,12 @@ const Blog = ({ blog, blogService, setErrorMessage }) => {
           <a href={blog.url}>{blog.url}</a><br />
           {likes} likes <button onClick={onLike}>Like!</button><br />
           posted by {blog.user.name}
+          {loggedInUser.id === blog.user.id &&
+            <>
+              &nbsp;<br />
+              <button onClick={() => onDelete(blog)}>Delete</button>
+            </>
+          }
         </>
       }
       {!visible &&

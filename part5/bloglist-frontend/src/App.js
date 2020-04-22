@@ -39,6 +39,30 @@ const App = () => {
     setLoggedInUser(null)
   }
 
+  // Deletes a blog
+  const onDelete = async (blog) => {
+    if (window.confirm(`Are you sure you want to remove the blog "${blog.title}"?`)) {
+      try {
+        const response = await blogService.deleteBlog(blog.id)
+        if (response.hasOwnProperty('error')) {
+          setErrorMessage(response.error)
+          setTimeout(() => {
+            setErrorMessage(null)
+          }, 5000)
+        }
+        else {
+          setBlogs(blogs.filter(b => (b.id !== blog.id)))
+        }
+      }
+      catch (error) {
+        setErrorMessage(error)
+        setTimeout(() => {
+          setErrorMessage(null)
+        }, 5000)
+      }
+    }
+  }
+
   // Render blogs or login form
   return (
     <>
@@ -71,6 +95,8 @@ const App = () => {
               key={blog.id}
               blog={blog}
               blogService={blogService}
+              loggedInUser={loggedInUser}
+              onDelete={onDelete}
               setErrorMessage={setErrorMessage}
             />
           )}

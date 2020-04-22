@@ -27,7 +27,8 @@ loginRouter.post('/', async (request, response) => {
   return response.status(200).json({
     token: jwt_token,
     name: user.name,
-    username: user.username
+    username: user.username,
+    id: user._id
   })
 
 })
