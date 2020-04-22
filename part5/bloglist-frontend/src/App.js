@@ -18,8 +18,8 @@ const App = () => {
   // Get all blogs when component renders.
   useEffect(() => {
     blogService.getAll().then(blogs =>
-      setBlogs( blogs )
-    )  
+      setBlogs(blogs.sort((a, b) => b.likes - a.likes))
+    )
   }, [])
 
   // Check local storage when component renders to see if a user is currently
