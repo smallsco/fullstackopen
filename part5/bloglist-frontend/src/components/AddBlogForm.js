@@ -11,6 +11,7 @@ const AddBlogForm = (props) => {
   const [title, setTitle] = useState('')
   const [author, setAuthor] = useState('')
   const [url, setURL] = useState('')
+  const [visible, setVisible] = useState(false)
 
   const onAdd = async (event) => {
     event.preventDefault()
@@ -34,6 +35,7 @@ const AddBlogForm = (props) => {
       setTitle('')
       setAuthor('')
       setURL('')
+      setVisible(false)
     }
     catch (error) {
       setErrorMessage(error)
@@ -47,10 +49,18 @@ const AddBlogForm = (props) => {
     <div>
       <h2>Add New Blog</h2>
       <form>
-        Title: <input type='text' value={title} onChange={(event) => setTitle(event.target.value)} /><br />
-        Author: <input type='text' value={author} onChange={(event) => setAuthor(event.target.value)} /><br />
-        URL: <input type='text' value={url} onChange={(event) => setURL(event.target.value)} /><br />
-        <button type='submit' onClick={onAdd}>Add New Blog</button>
+        { !visible &&
+          <button onClick={() => setVisible(true)}>Show Form</button>
+        }
+        { visible &&
+          <>
+            Title: <input type='text' value={title} onChange={(event) => setTitle(event.target.value)} /><br />
+            Author: <input type='text' value={author} onChange={(event) => setAuthor(event.target.value)} /><br />
+            URL: <input type='text' value={url} onChange={(event) => setURL(event.target.value)} /><br />
+            <button type='submit' onClick={onAdd}>Add New Blog</button>
+            <button onClick={() => setVisible(false)}>Hide Form</button>
+          </>
+        }
       </form>
     </div>
   )
