@@ -22,10 +22,10 @@ blogsRouter.post('/', async (request, response) => {
   const decodedToken = jwt.verify(request.token, config.JWT_SECRET)
 
   // Validate input
-  if (!request.body.hasOwnProperty('title')) {
+  if (!request.body.hasOwnProperty('title') || (request.body.hasOwnProperty('title') && request.body.title === '')) {
     return response.status(400).json({error: "Missing title property"})
   }
-  if (!request.body.hasOwnProperty('url')) {
+  if (!request.body.hasOwnProperty('url') || (request.body.hasOwnProperty('url') && request.body.url === '')) {
     return response.status(400).json({error: "Missing url property"})
   }
 

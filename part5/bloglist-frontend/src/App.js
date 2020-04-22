@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react'
 
 // My Imports
+import AddBlogForm from './components/AddBlogForm'
 import Blog from './components/Blog'
 import LoginForm from './components/LoginForm'
 import blogService from './services/blogs'
@@ -26,6 +27,7 @@ const App = () => {
     const userJSON = window.localStorage.getItem('fsoblogapp.loggedinuser')
     if (userJSON) {
       const user = JSON.parse(userJSON)
+      blogService.setToken(user.token)
       setLoggedInUser(user)
     }
   }, [])
@@ -51,6 +53,7 @@ const App = () => {
         setUsername('')
         setPassword('')
         setLoggedInUser(user)
+        blogService.setToken(user.token)
         window.localStorage.setItem(
           'fsoblogapp.loggedinuser',
           JSON.stringify(user)
@@ -82,10 +85,16 @@ const App = () => {
       }
       {loggedInUser &&
         <div>
+          <h1>Blog App</h1>
           <p>
             Welcome, {loggedInUser.name}!
             <button onClick={onLogout}>Logout</button>
           </p>
+          <AddBlogForm
+            blogService={blogService}
+            blogs={blogs}
+            setBlogs={setBlogs}
+          />
           <h2>Blogs</h2>
           {blogs.map(blog =>
             <Blog key={blog.id} blog={blog} />
