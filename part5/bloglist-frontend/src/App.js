@@ -5,14 +5,15 @@ import React, { useState, useEffect } from 'react'
 import AddBlogForm from './components/AddBlogForm'
 import Blog from './components/Blog'
 import LoginForm from './components/LoginForm'
+import Notification from './components/Notification'
 import blogService from './services/blogs'
-import loginService from './services/login'
+
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
-  const [username, setUsername] = useState('')
-  const [password, setPassword] = useState('')
   const [loggedInUser, setLoggedInUser] = useState(null)
+  const [notificationMessage, setNotificationMessage] = useState(null)
+  const [errorMessage, setErrorMessage] = useState(null)
 
   // Get all blogs when component renders.
   useEffect(() => {
@@ -32,39 +33,6 @@ const App = () => {
     }
   }, [])
 
-  // Update username/password state when user types into the login form.
-  const onChangeUsername = (event) => {
-    setUsername(event.target.value)
-  }
-  const onChangePassword = (event) => {
-    setPassword(event.target.value)
-  }
-
-  // Logs in a user
-  const onLogin = async (event) => {
-    event.preventDefault()
-    try {
-      const user = await loginService.login(username, password)
-
-      if (user.hasOwnProperty('error')) {
-        console.log(user.error)
-      }
-      else {
-        setUsername('')
-        setPassword('')
-        setLoggedInUser(user)
-        blogService.setToken(user.token)
-        window.localStorage.setItem(
-          'fsoblogapp.loggedinuser',
-          JSON.stringify(user)
-        )
-      }
-    }
-    catch (error) {
-      console.log(error)
-    }
-  }
-
   // Logs out a user
   const onLogout = () => {
     window.localStorage.removeItem('fsoblogapp.loggedinuser')
@@ -74,13 +42,13 @@ const App = () => {
   // Render blogs or login form
   return (
     <>
+      <Notification type='error' message={errorMessage} />
+      <Notification type='success' message={notificationMessage} />
       {!loggedInUser &&
         <LoginForm
-          username={username}
-          onChangeUsername={onChangeUsername}
-          password={password}
-          onChangePassword={onChangePassword}
-          onLogin={onLogin}
+          blogService={blogService}
+          setErrorMessage={setErrorMessage}
+          setLoggedInUser={setLoggedInUser}
         />
       }
       {loggedInUser &&
@@ -94,6 +62,8 @@ const App = () => {
             blogService={blogService}
             blogs={blogs}
             setBlogs={setBlogs}
+            setErrorMessage={setErrorMessage}
+            setNotificationMessage={setNotificationMessage}
           />
           <h2>Blogs</h2>
           {blogs.map(blog =>
