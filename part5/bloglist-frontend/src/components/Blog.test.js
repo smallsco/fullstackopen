@@ -9,6 +9,9 @@ import Blog from './blog'
 
 describe('Blog Component', () => {
   let component, onDelete, setErrorMessage
+  const blogServiceFixture = {
+    likeBlog: jest.fn()
+  }
   const blogFixture = {
     title: 'A Test Blog',
     author: 'A Test Author',
@@ -35,7 +38,7 @@ describe('Blog Component', () => {
     component = render(
       <Blog
         blog={blogFixture}
-        blogService={{}}
+        blogService={blogServiceFixture}
         loggedInUser={userFixture}
         onDelete={onDelete}
         setErrorMessage={setErrorMessage}
@@ -59,4 +62,14 @@ describe('Blog Component', () => {
     expect(component.container).toHaveTextContent('likes')
   })
 
+  test('clicking the like button causes the blog to be liked on each press', () => {
+    const detailsButton = component.getByText('View Details')
+    fireEvent.click(detailsButton)
+
+    const likeButton = component.getByText('Like!')
+    fireEvent.click(likeButton)
+    fireEvent.click(likeButton)
+
+    expect(blogServiceFixture.likeBlog.mock.calls).toHaveLength(2)
+  })
 })
