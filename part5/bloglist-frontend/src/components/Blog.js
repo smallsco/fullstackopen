@@ -1,5 +1,6 @@
 // Third-Party Imports
 import React, { useState } from 'react'
+import PropTypes from 'prop-types'
 
 const Blog = ({ blog, blogService, loggedInUser, onDelete, setErrorMessage }) => {
 
@@ -63,6 +64,14 @@ const Blog = ({ blog, blogService, loggedInUser, onDelete, setErrorMessage }) =>
       }
     </div>
   )
+}
+
+Blog.propTypes = {
+  blog: PropTypes.object.isRequired,
+  blogService: PropTypes.object.isRequired,
+  loggedInUser: PropTypes.object.isRequired,
+  onDelete: PropTypes.func.isRequired,
+  setErrorMessage: PropTypes.func.isRequired
 }
 
 export default Blog
