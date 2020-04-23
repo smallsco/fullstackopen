@@ -50,4 +50,13 @@ describe('Blog Component', () => {
     expect(component.container).not.toHaveTextContent(blogFixture.url)
     expect(component.container).not.toHaveTextContent('likes')
   })
+
+  test('displays the URL and likes when view details is clicked', () => {
+    const button = component.getByText('View Details')
+    fireEvent.click(button)
+
+    expect(component.container).toHaveTextContent(blogFixture.url)
+    expect(component.container).toHaveTextContent('likes')
+  })
+
 })
