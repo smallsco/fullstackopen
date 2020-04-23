@@ -42,7 +42,7 @@ const Blog = ({ blog, blogService, loggedInUser, onDelete, setErrorMessage }) =>
 
   // Render blog to screen
   return (
-    <div style={blogStyle}>
+    <div style={blogStyle} className='blog'>
       {blog.title} - {blog.author} &nbsp;
       {visible &&
         <>
