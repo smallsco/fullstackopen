@@ -29,10 +29,10 @@ const addBlog = async (blog) => {
     }
     else if (error.response.data) {
       // handle proxy errors which are returned by strings
-      return {error: error.response.data}
+      return { error: error.response.data }
     }
     else {
-      return {error: "Unknown error occurred during add blog. Check backend logs."}
+      return { error: 'Unknown error occurred during add blog. Check backend logs.' }
     }
   }
 }
@@ -57,10 +57,10 @@ const likeBlog = async (blog) => {
     }
     else if (error.response.data) {
       // handle proxy errors which are returned by strings
-      return {error: error.response.data}
+      return { error: error.response.data }
     }
     else {
-      return {error: "Unknown error occurred during like blog. Check backend logs."}
+      return { error: 'Unknown error occurred during like blog. Check backend logs.' }
     }
   }
 }
@@ -81,10 +81,10 @@ const deleteBlog = async (id) => {
     }
     else if (error.response.data) {
       // handle proxy errors which are returned by strings
-      return {error: error.response.data}
+      return { error: error.response.data }
     }
     else {
-      return {error: "Unknown error occurred during delete blog. Check backend logs."}
+      return { error: 'Unknown error occurred during delete blog. Check backend logs.' }
     }
   }
 }

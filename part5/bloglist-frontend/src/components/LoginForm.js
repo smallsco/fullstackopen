@@ -19,7 +19,7 @@ const LoginForm = (props) => {
     try {
       const user = await loginService.login(username, password)
 
-      if (user.hasOwnProperty('error')) {
+      if ({}.hasOwnProperty.call(user, 'error')) {
         setErrorMessage(user.error)
         setTimeout(() => {
           setErrorMessage(null)

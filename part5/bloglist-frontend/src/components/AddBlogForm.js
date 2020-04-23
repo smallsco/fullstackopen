@@ -8,7 +8,7 @@ const AddBlogForm = (props) => {
     setErrorMessage,
     setNotificationMessage
   } = props
-  
+
   const [title, setTitle] = useState('')
   const [author, setAuthor] = useState('')
   const [url, setURL] = useState('')
@@ -17,8 +17,8 @@ const AddBlogForm = (props) => {
   const onAdd = async (event) => {
     event.preventDefault()
     try {
-      const newBlog = await blogService.addBlog({title, author, url})
-      if (newBlog.hasOwnProperty('error')) {
+      const newBlog = await blogService.addBlog({ title, author, url })
+      if ({}.hasOwnProperty.call(newBlog, 'error')) {
         setErrorMessage(newBlog.error)
         setTimeout(() => {
           setErrorMessage(null)

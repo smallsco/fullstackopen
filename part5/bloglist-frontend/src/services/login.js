@@ -2,7 +2,7 @@ import axios from 'axios'
 
 const login = async (username, password) => {
   try {
-    const response = await axios.post('/api/login', {username, password})
+    const response = await axios.post('/api/login', { username, password })
     return response.data
   }
   catch (error) {
@@ -12,10 +12,10 @@ const login = async (username, password) => {
     }
     else if (error.response.data) {
       // handle proxy errors which are returned by strings
-      return {error: error.response.data}
+      return { error: error.response.data }
     }
     else {
-      return {error: "Unknown error occurred during login. Check backend logs."}
+      return { error: 'Unknown error occurred during login. Check backend logs.' }
     }
   }
 }

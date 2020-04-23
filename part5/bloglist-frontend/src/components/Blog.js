@@ -22,7 +22,7 @@ const Blog = ({ blog, blogService, loggedInUser, onDelete, setErrorMessage }) =>
     event.preventDefault()
     try {
       const response = await blogService.likeBlog(blog)
-      if (response.hasOwnProperty('error')) {
+      if ({}.hasOwnProperty.call(response, 'error')) {
         setErrorMessage(response.error)
         setTimeout(() => {
           setErrorMessage(null)

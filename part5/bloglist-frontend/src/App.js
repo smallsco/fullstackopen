@@ -44,7 +44,7 @@ const App = () => {
     if (window.confirm(`Are you sure you want to remove the blog "${blog.title}"?`)) {
       try {
         const response = await blogService.deleteBlog(blog.id)
-        if (response.hasOwnProperty('error')) {
+        if ({}.hasOwnProperty.call(response, 'error')) {
           setErrorMessage(response.error)
           setTimeout(() => {
             setErrorMessage(null)
