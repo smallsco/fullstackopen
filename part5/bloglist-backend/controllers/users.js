@@ -7,7 +7,7 @@ const User = require('../models/user')
 
 // List all users
 usersRouter.get('/', async (request, response) => {
-  const users = await User.find({}).populate('blogs', {url: 1, title: 1, author: 1})
+  const users = await User.find({}).populate('blogs', { url: 1, title: 1, author: 1 })
   return response.json(users.map(u => u.toJSON()))
 })
 
@@ -16,11 +16,11 @@ usersRouter.post('/', async (request, response) => {
 
   // Username is validated by Mongoose.
   // Password must be validated here (Mongoose only gets the hash)
-  if (!request.body.hasOwnProperty('password')) {
-    return response.status(400).json({error: "Please provide a password"})
+  if (!{}.hasOwnProperty.call(request.body, 'password')) {
+    return response.status(400).json({ error: 'Please provide a password' })
   }
   if (request.body.password.length < 3) {
-    return response.status(400).json({ error: "Password must be at least 3 characters" })
+    return response.status(400).json({ error: 'Password must be at least 3 characters' })
   }
 
   const saltRounds = 10

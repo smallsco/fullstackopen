@@ -13,7 +13,7 @@ loginRouter.post('/', async (request, response) => {
   // Find user if exists and validate password
   const user = await User.findOne({ username: request.body.username })
   if (!(user && await bcrypt.compare(request.body.password, user.passwordHash))) {
-    return response.status(401).json({ error: "Username or Password is incorrect" })
+    return response.status(401).json({ error: 'Username or Password is incorrect' })
   }
 
   // Generate Token

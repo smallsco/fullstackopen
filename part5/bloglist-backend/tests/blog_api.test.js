@@ -33,7 +33,7 @@ describe('list all blogs endpoint', () => {
     })
 
     const fixturesWithNullUsers = helper.blogFixtures.map(blog => {
-      const newBlog = {...blog}
+      const newBlog = { ...blog }
       newBlog.user = null  // these are faked in fixture data so they do not populate
       return newBlog
     })
@@ -79,7 +79,11 @@ describe('add new blog endpoint', () => {
     expect(post_response.body.author).toEqual(newBlog.author)
     expect(post_response.body.url).toEqual(newBlog.url)
     expect(post_response.body.likes).toEqual(newBlog.likes)
-    expect(post_response.body.user).toEqual(usersAtStart[0].id)
+    expect(post_response.body.user).toEqual({
+      'id': usersAtStart[0].id,
+      'name': usersAtStart[0].name,
+      'username': usersAtStart[0].username
+    })
 
     // Verify that the total number of blogs has increased by 1
     const blogsAtEnd = await helper.blogsInDb()
@@ -123,7 +127,7 @@ describe('add new blog endpoint', () => {
     }
     const response = await api
       .post('/api/blogs')
-      .set('Authorization', `Bearer this_is_an_invalid_token`)
+      .set('Authorization', 'Bearer this_is_an_invalid_token')
       .send(newBlog)
       .expect(401)
       .expect('Content-Type', /application\/json/)

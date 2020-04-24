@@ -9,6 +9,7 @@ const mongoose = require('mongoose')
 const config = require('./utils/config')
 const blogsRouter = require('./controllers/blogs')
 const loginRouter = require('./controllers/login')
+const testingRouter = require('./controllers/testing')
 const usersRouter = require('./controllers/users')
 const middleware = require('./utils/middleware')
 
@@ -26,6 +27,11 @@ app.use(middleware.tokenExtractor)
 app.use('/api/blogs', blogsRouter)
 app.use('/api/login', loginRouter)
 app.use('/api/users', usersRouter)
+
+// Test-Only Routes
+if (process.env.NODE_ENV === 'test') {
+  app.use('/api/testing', testingRouter)
+}
 
 // Post-Routing Middleware
 app.use(middleware.errorHandler)

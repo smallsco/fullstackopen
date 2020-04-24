@@ -8,27 +8,27 @@ const User = require('../models/user')
 
 const blogFixtures = [
   {
-    "title": "My First Blog",
-    "author": "John",
-    "url": "http://localhost:3003",
-    "likes": 5,
-    "user": "5e9ce38e8b0fa755c6f25dc3"
+    'title': 'My First Blog',
+    'author': 'John',
+    'url': 'http://localhost:3003',
+    'likes': 5,
+    'user': '5e9ce38e8b0fa755c6f25dc3'
   },
   {
-    "title": "Hello World",
-    "author": "David",
-    "url": "http://localhost:3003",
-    "likes": 6,
-    "user": "5e9ce4608b0fa755c6f25dc4"
+    'title': 'Hello World',
+    'author': 'David',
+    'url': 'http://localhost:3003',
+    'likes': 6,
+    'user': '5e9ce4608b0fa755c6f25dc4'
   }
 ]
 
 const userFixtures = [
   {
-    "username": "root",
-    "name": "Root User",
-    "passwordHash": "$2b$10$DluTmKexscyInwxQHyedN.InVisAZbFMtC4X6GEfLF5TlBQ3yoCqe",
-    "blogs": []
+    'username': 'root',
+    'name': 'Root User',
+    'passwordHash': '$2b$10$DluTmKexscyInwxQHyedN.InVisAZbFMtC4X6GEfLF5TlBQ3yoCqe',
+    'blogs': []
   }
 ]
 

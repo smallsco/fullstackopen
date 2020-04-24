@@ -2,7 +2,7 @@
 const _ = require('lodash')
 
 // Always returns 1.
-const dummy = blogs => 1
+const dummy = () => 1
 
 // Given a list of blogs, return the total likes.
 const totalLikes = blogs => (
@@ -34,9 +34,9 @@ const mostBlogs = blogs => {
     if (numBlogs > max.blogs) {
       max.blogs = numBlogs
       max.author = author
-    }    
+    }
     return max
-  }, {'blogs': 0, 'author': ''})
+  }, { 'blogs': 0, 'author': '' })
 }
 
 // Given a list of blogs, return the author whos blog posts have the most total
@@ -52,9 +52,9 @@ const mostLikes = blogs => {
     if (numLikes > max.likes) {
       max.likes = numLikes
       max.author = author
-    }    
+    }
     return max
-  }, {'likes': 0, 'author': ''})
+  }, { 'likes': 0, 'author': '' })
 }
 
 module.exports = {

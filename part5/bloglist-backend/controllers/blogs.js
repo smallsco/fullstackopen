@@ -22,11 +22,11 @@ blogsRouter.post('/', async (request, response) => {
   const decodedToken = jwt.verify(request.token, config.JWT_SECRET)
 
   // Validate input
-  if (!request.body.hasOwnProperty('title') || (request.body.hasOwnProperty('title') && request.body.title === '')) {
-    return response.status(400).json({error: "Missing title property"})
+  if (!{}.hasOwnProperty.call(request.body, 'title') || ({}.hasOwnProperty.call(request.body, 'title') && request.body.title === '')) {
+    return response.status(400).json({ error: 'Missing title property' })
   }
-  if (!request.body.hasOwnProperty('url') || (request.body.hasOwnProperty('url') && request.body.url === '')) {
-    return response.status(400).json({error: "Missing url property"})
+  if (!{}.hasOwnProperty.call(request.body, 'url') || ({}.hasOwnProperty.call(request.body, 'url') && request.body.url === '')) {
+    return response.status(400).json({ error: 'Missing url property' })
   }
 
   // Get user from JWT
@@ -46,7 +46,11 @@ blogsRouter.post('/', async (request, response) => {
   loggedInUser.blogs = loggedInUser.blogs.concat(savedBlog._id)
   await loggedInUser.save()
 
-  return response.status(201).json(savedBlog)
+  // Populating saved blogs doesn't work, so re-fetch it
+  const returnedBlog = await Blog
+    .findById(savedBlog._id)
+    .populate('user', { username: 1, name: 1 })
+  return response.status(201).json(returnedBlog)
 })
 
 // Delete a blog
@@ -68,17 +72,17 @@ blogsRouter.delete('/:id', async (request, response) => {
   }
   else {
     // If not then throw an error
-    return response.status(400).json({error: "Only the user who posted the blog can delete it"})
+    return response.status(400).json({ error: 'Only the user who posted the blog can delete it' })
   }
 })
 
 // Update an existing blog's like count
 blogsRouter.put('/:id', async (request, response) => {
-  if (!request.body.hasOwnProperty('title')) {
-    return response.status(400).json({error: "Missing title property"})
+  if (!{}.hasOwnProperty.call(request.body, 'title')) {
+    return response.status(400).json({ error: 'Missing title property' })
   }
-  if (!request.body.hasOwnProperty('url')) {
-    return response.status(400).json({error: "Missing url property"})
+  if (!{}.hasOwnProperty.call(request.body, 'url')) {
+    return response.status(400).json({ error: 'Missing url property' })
   }
 
   const newBlog = {
@@ -88,7 +92,7 @@ blogsRouter.put('/:id', async (request, response) => {
     likes: request.body.likes === undefined ? 0 : request.body.likes
   }
 
-  const updatedBlog = await Blog.findByIdAndUpdate(request.params.id, newBlog, {new: true})
+  const updatedBlog = await Blog.findByIdAndUpdate(request.params.id, newBlog, { new: true })
   return response.json(updatedBlog.toJSON())
 })
 

@@ -7,7 +7,7 @@ import { render, fireEvent } from '@testing-library/react'
 import AddBlogForm from './AddBlogForm'
 
 test('Add Blog Form Component can be used to add a new blog', () => {
-  
+
   // Fixtures
   const blogServiceFixture = {
     addBlog: jest.fn()
@@ -37,14 +37,14 @@ test('Add Blog Form Component can be used to add a new blog', () => {
   const titleField = component.container.querySelector('#title')
   const authorField = component.container.querySelector('#author')
   const urlField = component.container.querySelector('#url')
-  fireEvent.change(titleField, { 
-    target: { value: blogFixture.title } 
+  fireEvent.change(titleField, {
+    target: { value: blogFixture.title }
   })
-  fireEvent.change(authorField, { 
-    target: { value: blogFixture.author } 
+  fireEvent.change(authorField, {
+    target: { value: blogFixture.author }
   })
-  fireEvent.change(urlField, { 
-    target: { value: blogFixture.url } 
+  fireEvent.change(urlField, {
+    target: { value: blogFixture.url }
   })
 
   // Submit the form

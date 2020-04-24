@@ -48,9 +48,9 @@ const LoginForm = (props) => {
     <div>
       <h1>Login to Blog App</h1>
       <form>
-        Username: <input type='text' value={username} onChange={(event) => setUsername(event.target.value)} /><br />
-        Password: <input type='password' value={password} onChange={(event) => setPassword(event.target.value)} /><br />
-        <button type='submit' onClick={onLogin}>Login</button>
+        Username: <input id='username' type='text' value={username} onChange={(event) => setUsername(event.target.value)} /><br />
+        Password: <input id='password' type='password' value={password} onChange={(event) => setPassword(event.target.value)} /><br />
+        <button id='login' type='submit' onClick={onLogin}>Login</button>
       </form>
     </div>
   )

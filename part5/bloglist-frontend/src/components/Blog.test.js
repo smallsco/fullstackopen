@@ -19,16 +19,16 @@ describe('Blog Component', () => {
     likes: 1,
     id: '5e9ce38e8b0fa755c6f25dc3',
     user: {
-      username: "root",
-      name: "Root User",
-      id: "5e9cd01061ebde470cfd9d64"
+      username: 'root',
+      name: 'Root User',
+      id: '5e9cd01061ebde470cfd9d64'
     }
   }
   const userFixture = {
-    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImRkZW5uaXNvbiIsImlkIjoiNWU5Y2QxNmQ2YWE3MGQ0N2M2ODY1NWJhIiwiaWF0IjoxNTg3NTEyMzEzfQ.QjOfZximmHQdVg71kaqD5dQ0SR4dW71PO3i3pkSrFDY",
-    "name": "Root User",
-    "username": "root",
-    "id": "5e9cd01061ebde470cfd9d64"
+    'token': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImRkZW5uaXNvbiIsImlkIjoiNWU5Y2QxNmQ2YWE3MGQ0N2M2ODY1NWJhIiwiaWF0IjoxNTg3NTEyMzEzfQ.QjOfZximmHQdVg71kaqD5dQ0SR4dW71PO3i3pkSrFDY',
+    'name': 'Root User',
+    'username': 'root',
+    'id': '5e9cd01061ebde470cfd9d64'
   }
 
   // Before each test, rerender component from fixture data and mock functions
