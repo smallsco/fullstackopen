@@ -7,10 +7,10 @@ describe('Blog app', function() {
       password: 'tpassword'
     }
     cy.request('POST', 'http://localhost:3001/api/users/', user)
-    cy.visit('http://localhost:3000')
   })
 
   it('Login form is shown', function() {
+    cy.visit('http://localhost:3000')
     cy.contains('Login to Blog App')
     cy.contains('Username:')
     cy.get('#username')
@@ -21,6 +21,7 @@ describe('Blog app', function() {
 
   describe('Login', function() {
     it('succeeds with correct credentials', function() {
+      cy.visit('http://localhost:3000')
       cy.get('#username').type('tuser')
       cy.get('#password').type('tpassword')
       cy.get('#login').click()
@@ -28,6 +29,7 @@ describe('Blog app', function() {
     })
 
     it('fails with wrong credentials', function() {
+      cy.visit('http://localhost:3000')
       cy.get('#username').type('tuser')
       cy.get('#password').type('wrongpassword')
       cy.get('#login').click()
@@ -40,6 +42,30 @@ describe('Blog app', function() {
       .and('have.css', 'padding', '10px')
       .and('have.css', 'margin-bottom', '10px')
     })
-
   })
+
+  describe.only('When logged in', function() {
+    beforeEach(function() {
+      cy.login({ username: 'tuser', password: 'tpassword' })
+    })
+
+    it('A blog can be created', function() {
+      cy.contains('Show Form').click()
+      cy.get('#title').type('Test Title')
+      cy.get('#author').type('Test Author')
+      cy.get('#url').type('http://www.example.com')
+      cy.get('#addBlog').click()
+
+      // notification show up
+      cy.contains('Added blog "Test Title" by author "Test Author"')
+
+      // blog shows up
+      cy.contains('Test Title - Test Author')
+      cy.contains('View Details').click()
+      cy.contains('http://www.example.com')
+      cy.contains('0 likes')
+      cy.contains('posted by Test User')
+    })
+  })
+
 })

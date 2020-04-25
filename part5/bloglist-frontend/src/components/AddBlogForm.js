@@ -63,7 +63,7 @@ const AddBlogForm = (props) => {
             Title: <input id='title' type='text' value={title} onChange={(event) => setTitle(event.target.value)} /><br />
             Author: <input id='author' type='text' value={author} onChange={(event) => setAuthor(event.target.value)} /><br />
             URL: <input id='url' type='text' value={url} onChange={(event) => setURL(event.target.value)} /><br />
-            <button type='submit'>Add New Blog</button>
+            <button id='addBlog' type='submit'>Add New Blog</button>
             <button onClick={toggleVisibility}>Hide Form</button>
           </>
         }
