@@ -7,6 +7,12 @@ describe('Blog app', function() {
       password: 'tpassword'
     }
     cy.request('POST', 'http://localhost:3001/api/users/', user)
+    const user2 = {
+      name: 'Test User2',
+      username: 'tuser2',
+      password: 'tpassword2'
+    }
+    cy.request('POST', 'http://localhost:3001/api/users/', user2)
   })
 
   it('Login form is shown', function() {
@@ -50,13 +56,16 @@ describe('Blog app', function() {
     })
 
     it('A blog can be created', function() {
+      // show the add blog form
       cy.contains('Show Form').click()
+
+      // fill out the add blog form
       cy.get('#title').type('Test Title')
       cy.get('#author').type('Test Author')
       cy.get('#url').type('http://www.example.com')
       cy.get('#addBlog').click()
 
-      // notification show up
+      // notification shows up
       cy.contains('Added blog "Test Title" by author "Test Author"')
 
       // blog shows up
@@ -73,9 +82,30 @@ describe('Blog app', function() {
       })
 
       it('a blog can be liked', function() {
+        // like the blog
         cy.contains('View Details').click()
         cy.contains('Like!').click()
+
+        // blog was liked
         cy.contains('1 likes')
+      })
+
+      it('a blog can be deleted by the user who created it', function() {
+        // delete the blog
+        cy.contains('View Details').click()
+        cy.contains('Delete').click()
+
+        // blog does not exist
+        cy.contains('Test Title - Test Author').should('not.exist')
+      })
+
+      it('a blog cannot be deleted by a user who did not create it', function() {
+        // log in as another user
+        cy.login({ username: 'tuser2', password: 'tpassword2' })
+
+        // the delete button does not exist
+        cy.contains('View Details').click()
+        cy.contains('Delete').should('not.exist')
       })
     })
 
