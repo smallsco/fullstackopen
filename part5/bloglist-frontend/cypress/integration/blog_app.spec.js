@@ -40,13 +40,13 @@ describe('Blog app', function() {
       cy.get('#password').type('wrongpassword')
       cy.get('#login').click()
       cy.get('.error')
-      .should('contain', 'Username or Password is incorrect')
-      .and('have.css', 'color', 'rgb(255, 0, 0)')
-      .and('have.css', 'font-size', '20px')
-      .and('have.css', 'border-style', 'solid')
-      .and('have.css', 'border-radius', '5px')
-      .and('have.css', 'padding', '10px')
-      .and('have.css', 'margin-bottom', '10px')
+        .should('contain', 'Username or Password is incorrect')
+        .and('have.css', 'color', 'rgb(255, 0, 0)')
+        .and('have.css', 'font-size', '20px')
+        .and('have.css', 'border-style', 'solid')
+        .and('have.css', 'border-radius', '5px')
+        .and('have.css', 'padding', '10px')
+        .and('have.css', 'margin-bottom', '10px')
     })
   })
 
@@ -106,6 +106,30 @@ describe('Blog app', function() {
         // the delete button does not exist
         cy.contains('View Details').click()
         cy.contains('Delete').should('not.exist')
+      })
+
+      it('multiple blogs are listed by their like count in descending order', function() {
+        // add 2 more blogs. the DB order looks like:
+        // test 1 - 0 likes
+        // test 2 - 2 likes
+        // test 3 - 1 likes
+        cy.addBlog({ title: 'Test Title 2', author: 'Test Author 2', url: 'http://www.example.com', likes: 2 })
+        cy.addBlog({ title: 'Test Title 3', author: 'Test Author 3', url: 'http://www.example.com', likes: 1 })
+
+        // handy references for each of the blogs
+        cy.get('#bloglist').children().eq(0).as('first')
+        cy.get('#bloglist').children().eq(1).as('second')
+        cy.get('#bloglist').children().eq(2).as('third')
+
+        // show the likes for each of the blogs
+        cy.get('@first').contains('View Details').click()
+        cy.get('@second').contains('View Details').click()
+        cy.get('@third').contains('View Details').click()
+
+        // the order on the page is sorted by likes descending
+        cy.get('@first').contains('2 likes')
+        cy.get('@second').contains('1 likes')
+        cy.get('@third').contains('0 likes')
       })
     })
 

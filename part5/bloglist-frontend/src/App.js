@@ -90,16 +90,18 @@ const App = () => {
             setNotificationMessage={setNotificationMessage}
           />
           <h2>Blogs</h2>
-          {blogs.map(blog =>
-            <Blog
-              key={blog.id}
-              blog={blog}
-              blogService={blogService}
-              loggedInUser={loggedInUser}
-              onDelete={onDelete}
-              setErrorMessage={setErrorMessage}
-            />
-          )}
+          <div id='bloglist'>
+            {blogs.map(blog =>
+              <Blog
+                key={blog.id}
+                blog={blog}
+                blogService={blogService}
+                loggedInUser={loggedInUser}
+                onDelete={onDelete}
+                setErrorMessage={setErrorMessage}
+              />
+            )}
+          </div>
         </div>
       }
     </>
