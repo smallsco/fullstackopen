@@ -3,18 +3,24 @@ import { useSelector, useDispatch } from 'react-redux'
 import { createVoteAction, createNewAnecdoteAction } from './reducers/anecdoteReducer'
 
 const App = () => {
-  const anecdotes = useSelector(state => state)
   const dispatch = useDispatch()
 
+  // Get anecdotes from state and sort them by number of votes
+  let anecdotes = useSelector(state => state)
+  anecdotes.sort((a, b) => b.votes - a.votes)
+
+  // Upvote an anecdote
   const vote = (id) => {
     dispatch(createVoteAction(id))
   }
 
+  // Add a new anecdote
   const newAnecdote = (event) => {
     event.preventDefault()
     dispatch(createNewAnecdoteAction(event.target.anecdote.value))
   }
 
+  // Render anecdotes and form
   return (
     <div>
       <h2>Anecdotes</h2>
