@@ -13,8 +13,8 @@ import {
 const AnecdoteList = () => {
   const dispatch = useDispatch()
 
-  // Get anecdotes from state and sort them by number of votes
-  let anecdotes = useSelector(state => state.anecdotes)
+  // Get anecdotes from state, filter them, and sort them by number of votes
+  let anecdotes = useSelector(state => state.anecdotes.filter(anecdote => anecdote.content.includes(state.filter)))
   anecdotes.sort((a, b) => b.votes - a.votes)
 
   // Upvote an anecdote
