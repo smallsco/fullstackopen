@@ -10,4 +10,10 @@ const getAll = async () => {
   return response.data
 }
 
-export default { getAll }
+// Create a new anecdote in the DB.
+const createNew = async (content) => {
+  const response = await axios.post(baseUrl, { content, votes: 0 })
+  return response.data
+}
+
+export default { createNew, getAll }

@@ -1,6 +1,3 @@
-// Generate an ID
-const getId = () => (100000 * Math.random()).toFixed(0)
-
 // Reducer
 const anecdoteReducer = (state = [], action) => {
   switch(action.type) {
@@ -40,13 +37,9 @@ export const createVoteAction = (id) => ({
 })
 
 // Action creator function for creating a new anecdote
-export const createNewAnecdoteAction = (content) => ({
+export const createNewAnecdoteAction = (newAnecdote) => ({
   type: 'NEW',
-  data: {
-    content: content,
-    id: getId(),
-    votes: 0
-  }
+  data: newAnecdote
 })
 
 export default anecdoteReducer
