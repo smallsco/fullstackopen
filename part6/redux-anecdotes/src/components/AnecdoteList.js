@@ -10,7 +10,7 @@ const AnecdoteList = () => {
   const dispatch = useDispatch()
 
   // Get anecdotes from state and sort them by number of votes
-  let anecdotes = useSelector(state => state)
+  let anecdotes = useSelector(state => state.anecdotes)
   anecdotes.sort((a, b) => b.votes - a.votes)
 
   // Upvote an anecdote
