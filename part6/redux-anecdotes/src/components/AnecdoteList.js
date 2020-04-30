@@ -4,6 +4,10 @@ import { useSelector, useDispatch } from 'react-redux'
 
 // My Imports
 import { createVoteAction } from '../reducers/anecdoteReducer'
+import {
+  createShowNotificationAction,
+  createHideNotificationAction
+} from '../reducers/notificationReducer'
 
 
 const AnecdoteList = () => {
@@ -14,8 +18,12 @@ const AnecdoteList = () => {
   anecdotes.sort((a, b) => b.votes - a.votes)
 
   // Upvote an anecdote
-  const vote = (id) => {
-    dispatch(createVoteAction(id))
+  const vote = (anecdote) => {
+    dispatch(createVoteAction(anecdote.id))
+    dispatch(createShowNotificationAction(`Voted for anecdote "${anecdote.content}"`))
+    setTimeout(() => {
+      dispatch(createHideNotificationAction())
+    }, 5000)
   }
 
   // Render anecdotes
@@ -28,7 +36,7 @@ const AnecdoteList = () => {
           </div>
           <div>
             has {anecdote.votes}
-            <button onClick={() => vote(anecdote.id)}>vote</button>
+            <button onClick={() => vote(anecdote)}>vote</button>
           </div>
         </div>
       )}
