@@ -1,3 +1,6 @@
+// My Imports
+import anecdoteService from '../services/anecdotes'
+
 // Reducer
 const anecdoteReducer = (state = [], action) => {
   switch(action.type) {
@@ -25,10 +28,15 @@ const anecdoteReducer = (state = [], action) => {
 }
 
 // Action creator function for initializing anecdote list
-export const createInitAction = (anecdotes) => ({
-  type: 'INIT',
-  data: anecdotes
-})
+export const createInitAction = () => {
+  return async (dispatch) => {
+    const anecdotes = await anecdoteService.getAll()
+    dispatch({
+      type: 'INIT',
+      data: anecdotes
+    })
+  }
+}
 
 // Action creator function for upvotina anecdotes
 export const createVoteAction = (id) => ({
