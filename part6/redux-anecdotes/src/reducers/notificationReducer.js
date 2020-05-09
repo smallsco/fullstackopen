@@ -19,6 +19,16 @@ const notificationReducer = (state = defaultMessage, action) => {
   }
 }
 
+// Action creator function for notifications that auto-hide and can have custom timeouts
+export const createNotificationAction = (message, timeout = 5000) => {
+  return async (dispatch) => {
+    dispatch(createShowNotificationAction(message))
+    setTimeout(() => {
+      dispatch(createHideNotificationAction())
+    }, timeout)
+  }
+}
+
 // Action creator function for displaying a new notification
 export const createShowNotificationAction = (message) => ({
   type: 'SHOW_NOTIFICATION',

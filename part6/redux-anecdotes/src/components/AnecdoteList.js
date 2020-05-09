@@ -4,10 +4,7 @@ import { useSelector, useDispatch } from 'react-redux'
 
 // My Imports
 import { createVoteAction } from '../reducers/anecdoteReducer'
-import {
-  createShowNotificationAction,
-  createHideNotificationAction
-} from '../reducers/notificationReducer'
+import { createNotificationAction } from '../reducers/notificationReducer'
 
 
 const AnecdoteList = () => {
@@ -20,10 +17,7 @@ const AnecdoteList = () => {
   // Upvote an anecdote
   const vote = (anecdote) => {
     dispatch(createVoteAction(anecdote))
-    dispatch(createShowNotificationAction(`Voted for anecdote "${anecdote.content}"`))
-    setTimeout(() => {
-      dispatch(createHideNotificationAction())
-    }, 5000)
+    dispatch(createNotificationAction(`Voted for anecdote "${anecdote.content}"`))
   }
 
   // Render anecdotes
