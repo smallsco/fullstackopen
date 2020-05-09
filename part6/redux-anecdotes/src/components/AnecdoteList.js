@@ -19,7 +19,7 @@ const AnecdoteList = () => {
 
   // Upvote an anecdote
   const vote = (anecdote) => {
-    dispatch(createVoteAction(anecdote.id))
+    dispatch(createVoteAction(anecdote))
     dispatch(createShowNotificationAction(`Voted for anecdote "${anecdote.content}"`))
     setTimeout(() => {
       dispatch(createHideNotificationAction())

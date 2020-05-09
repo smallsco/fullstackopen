@@ -39,10 +39,19 @@ export const createInitAction = () => {
 }
 
 // Action creator function for upvotina anecdotes
-export const createVoteAction = (id) => ({
-  type: 'VOTE',
-  data: {id}
-})
+export const createVoteAction = (anecdote) => {
+  return async (dispatch) => {
+    const updatedAnecdote = {
+      ...anecdote,
+      votes: anecdote.votes + 1
+    }
+    await anecdoteService.update(updatedAnecdote, anecdote.id)
+    dispatch({
+      type: 'VOTE',
+      data: {id: anecdote.id}
+    })
+  }
+}
 
 // Action creator function for creating a new anecdote
 export const createNewAnecdoteAction = (content) => {

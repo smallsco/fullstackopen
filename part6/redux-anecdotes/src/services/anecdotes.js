@@ -16,4 +16,10 @@ const createNew = async (content) => {
   return response.data
 }
 
-export default { createNew, getAll }
+// Update an existing anecdote in the DB.
+const update = async (newObject, id) => {
+  const response = await axios.put(`${baseUrl}/${id}`, newObject)
+  return response.data
+}
+
+export default { createNew, getAll, update }
