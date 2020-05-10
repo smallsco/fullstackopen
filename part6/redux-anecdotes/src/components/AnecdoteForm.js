@@ -1,21 +1,20 @@
 // Third-Party Imports
 import React from 'react'
-import { useDispatch } from 'react-redux'
+import { connect } from 'react-redux'
 
 // My Imports
 import { createNewAnecdoteAction } from '../reducers/anecdoteReducer'
 import { createNotificationAction } from '../reducers/notificationReducer'
 
 
-const AnecdoteForm = () => {
-  const dispatch = useDispatch()
+const AnecdoteForm = (props) => {
 
   // Add a new anecdote
   const newAnecdote = async (event) => {
     event.preventDefault()
     const content = event.target.anecdote.value
-    dispatch(createNewAnecdoteAction(content))
-    dispatch(createNotificationAction(`Created new anecdote "${content}"`))
+    props.createNewAnecdoteAction(content)
+    props.createNotificationAction(`Created new anecdote "${content}"`)
   }
 
   // Render New Anecdote Form
@@ -30,4 +29,10 @@ const AnecdoteForm = () => {
   )
 }
 
-export default AnecdoteForm
+// Action Creators
+const mapDispatchToProps = {
+  createNewAnecdoteAction,
+  createNotificationAction
+}
+
+export default connect(null, mapDispatchToProps)(AnecdoteForm)

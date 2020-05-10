@@ -1,17 +1,16 @@
 // Third-Party Imports
 import React from 'react'
-import { useDispatch } from 'react-redux'
+import { connect } from 'react-redux'
 
 // My Imports
 import { createSetFilterAction } from '../reducers/filterReducer'
 
 
-const Filter = () => {
+const Filter = (props) => {
 
   // Update filter when value changes
-  const dispatch = useDispatch()
   const handleChange = (event) => {
-    dispatch(createSetFilterAction(event.target.value))
+    props.createSetFilterAction(event.target.value)
   }
 
   // Render Filter
@@ -25,4 +24,9 @@ const Filter = () => {
   )
 }
 
-export default Filter
+// Action Creators
+const mapDispatchToProps = {
+  createSetFilterAction
+}
+
+export default connect(null, mapDispatchToProps)(Filter)
