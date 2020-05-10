@@ -1,29 +1,23 @@
 // Third-Party Imports
 import React from 'react'
-import { useSelector, useDispatch } from 'react-redux'
+import { connect } from 'react-redux'
 
 // My Imports
 import { createVoteAction } from '../reducers/anecdoteReducer'
 import { createNotificationAction } from '../reducers/notificationReducer'
 
 
-const AnecdoteList = () => {
-  const dispatch = useDispatch()
-
-  // Get anecdotes from state, filter them, and sort them by number of votes
-  let anecdotes = useSelector(state => state.anecdotes.filter(anecdote => anecdote.content.includes(state.filter)))
-  anecdotes.sort((a, b) => b.votes - a.votes)
-
+const AnecdoteList = (props) => {
   // Upvote an anecdote
   const vote = (anecdote) => {
-    dispatch(createVoteAction(anecdote))
-    dispatch(createNotificationAction(`Voted for anecdote "${anecdote.content}"`))
+    props.createVoteAction(anecdote)
+    props.createNotificationAction(`Voted for anecdote "${anecdote.content}"`)
   }
 
   // Render anecdotes
   return (
     <>
-      {anecdotes.map(anecdote =>
+      {props.anecdotes.map(anecdote =>
         <div key={anecdote.id}>
           <div>
             {anecdote.content}
@@ -38,4 +32,19 @@ const AnecdoteList = () => {
   )
 }
 
-export default AnecdoteList
+// Get anecdotes from state, filter them, and sort them by number of votes
+const mapStateToProps = (state) => {
+  return {
+    anecdotes: state.anecdotes
+                .filter(anecdote => anecdote.content.includes(state.filter))
+                .sort((a, b) => b.votes - a.votes),
+  }
+}
+
+// Action Creators
+const mapDispatchToProps = {
+  createNotificationAction,
+  createVoteAction
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(AnecdoteList)
