@@ -1,10 +1,14 @@
+// Third-Party Imports
 import React, { useState } from 'react'
 import {
   Switch,
   Route,
-  Link
+  Link,
+  useRouteMatch
 } from "react-router-dom"
 
+
+// Site Navigation Menu
 const Menu = () => {
   const padding = {
     paddingRight: 5
@@ -18,15 +22,26 @@ const Menu = () => {
   )
 }
 
+// Single Anecdote View
+const Anecdote = ({ anecdote }) => (
+  <div>
+    <h2>{anecdote.content}</h2>
+    <p>has {anecdote.votes} votes</p>
+    <p>for more info see <a href={anecdote.info}>{anecdote.info}</a></p>
+  </div>
+)
+
+// All Anecdotes View
 const AnecdoteList = ({ anecdotes }) => (
   <div>
     <h2>Anecdotes</h2>
     <ul>
-      {anecdotes.map(anecdote => <li key={anecdote.id} >{anecdote.content}</li>)}
+      {anecdotes.map(anecdote => <li key={anecdote.id} ><Link to={`/anecdote/${anecdote.id}`}>{anecdote.content}</Link></li>)}
     </ul>
   </div>
 )
 
+// About View
 const About = () => (
   <div>
     <h2>About anecdote app</h2>
@@ -41,6 +56,7 @@ const About = () => (
   </div>
 )
 
+// Site Footer
 const Footer = () => (
   <div>
     Anecdote app for <a href='https://courses.helsinki.fi/fi/tkt21009'>Full Stack -websovelluskehitys</a>.
@@ -49,6 +65,7 @@ const Footer = () => (
   </div>
 )
 
+// Create new anecdote view
 const CreateNew = (props) => {
   const [content, setContent] = useState('')
   const [author, setAuthor] = useState('')
@@ -88,6 +105,7 @@ const CreateNew = (props) => {
 
 }
 
+// App Container
 const App = () => {
   const [anecdotes, setAnecdotes] = useState([
     {
@@ -127,11 +145,19 @@ const App = () => {
     setAnecdotes(anecdotes.map(a => a.id === id ? voted : a))
   }
 
+  // Look for an anecdote ID in the URL and
+  // get the corresponding anecdote if it exists
+  const match = useRouteMatch('/anecdote/:id')
+  const anecdote = match ? anecdoteById(match.params.id) : null
+
   return (
     <div>
       <h1>Software anecdotes</h1>
       <Menu />
       <Switch>
+        <Route path='/anecdote/:id'>
+          <Anecdote anecdote={anecdote} />
+        </Route>
         <Route path='/about'>
           <About />
         </Route>
