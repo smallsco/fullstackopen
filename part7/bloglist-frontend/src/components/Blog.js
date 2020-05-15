@@ -1,6 +1,6 @@
 // Third-Party Imports
 import React, { useState } from 'react'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import PropTypes from 'prop-types'
 
 // My Imports
@@ -8,7 +8,7 @@ import { createLikeAction } from '../reducers/blogReducer'
 
 const Blog = (props) => {
 
-  const { blog, loggedInUser, onDelete } = props
+  const { blog, onDelete } = props
 
   // Blog appearance
   const blogStyle = {
@@ -19,6 +19,7 @@ const Blog = (props) => {
   }
 
   const dispatch = useDispatch()
+  const loggedInUser = useSelector(state => state.user)
 
   // Default blogs to unexpanded
   const [visible, setVisible] = useState(false)
@@ -58,7 +59,6 @@ const Blog = (props) => {
 
 Blog.propTypes = {
   blog: PropTypes.object.isRequired,
-  loggedInUser: PropTypes.object.isRequired,
   onDelete: PropTypes.func.isRequired
 }
 

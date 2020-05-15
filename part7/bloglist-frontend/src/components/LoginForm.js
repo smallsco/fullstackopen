@@ -1,18 +1,11 @@
 // Third-Party Imports
 import React, { useState } from 'react'
 import { useDispatch } from 'react-redux'
-import PropTypes from 'prop-types'
 
 // My Imports
-import loginService from '../services/login'
-import { createNotificationAction } from '../reducers/notificationReducer'
+import { createLoginActionFromCredentials } from '../reducers/userReducer'
 
-const LoginForm = (props) => {
-  const {
-    blogService,
-    setLoggedInUser,
-  } = props
-
+const LoginForm = () => {
   const dispatch = useDispatch()
 
   const [username, setUsername] = useState('')
@@ -21,26 +14,9 @@ const LoginForm = (props) => {
   // Logs in a user
   const onLogin = async (event) => {
     event.preventDefault()
-    try {
-      const user = await loginService.login(username, password)
-
-      if ({}.hasOwnProperty.call(user, 'error')) {
-        dispatch(createNotificationAction('error', user.error))
-      }
-      else {
-        setUsername('')
-        setPassword('')
-        setLoggedInUser(user)
-        blogService.setToken(user.token)
-        window.localStorage.setItem(
-          'fsoblogapp.loggedinuser',
-          JSON.stringify(user)
-        )
-      }
-    }
-    catch (error) {
-      dispatch(createNotificationAction('error', error.message))
-    }
+    dispatch(createLoginActionFromCredentials({ username, password }))
+    setUsername('')
+    setPassword('')
   }
 
   return (
@@ -53,11 +29,6 @@ const LoginForm = (props) => {
       </form>
     </div>
   )
-}
-
-LoginForm.propTypes = {
-  blogService: PropTypes.object.isRequired,
-  setLoggedInUser: PropTypes.func.isRequired,
 }
 
 export default LoginForm

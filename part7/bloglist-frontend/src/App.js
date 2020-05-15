@@ -1,5 +1,5 @@
 // Third-Party Imports
-import React, { useState, useEffect } from 'react'
+import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
 // My Imports
@@ -7,13 +7,13 @@ import AddBlogForm from './components/AddBlogForm'
 import Blog from './components/Blog'
 import LoginForm from './components/LoginForm'
 import Notification from './components/Notification'
-import blogService from './services/blogs'
 import { createDeleteBlogAction, createInitAction } from './reducers/blogReducer'
+import { createLoginActionFromUser, createLogoutAction } from './reducers/userReducer'
 
 
 const App = () => {
   const dispatch = useDispatch()
-  const [loggedInUser, setLoggedInUser] = useState(null)
+  const loggedInUser = useSelector(state => state.user)
 
   // Get all blogs when component renders.
   useEffect(() => {
@@ -27,15 +27,13 @@ const App = () => {
     const userJSON = window.localStorage.getItem('fsoblogapp.loggedinuser')
     if (userJSON) {
       const user = JSON.parse(userJSON)
-      blogService.setToken(user.token)
-      setLoggedInUser(user)
+      dispatch(createLoginActionFromUser(user))
     }
-  }, [])
+  }, [dispatch])
 
   // Logs out a user
   const onLogout = () => {
-    window.localStorage.removeItem('fsoblogapp.loggedinuser')
-    setLoggedInUser(null)
+    dispatch(createLogoutAction())
   }
 
   // Deletes a blog
@@ -49,13 +47,10 @@ const App = () => {
   return (
     <>
       <Notification />
-      {!loggedInUser &&
-        <LoginForm
-          blogService={blogService}
-          setLoggedInUser={setLoggedInUser}
-        />
+      {!loggedInUser.id &&
+        <LoginForm />
       }
-      {loggedInUser &&
+      {loggedInUser.id &&
         <div>
           <h1>Blog App</h1>
           <p>
@@ -69,7 +64,6 @@ const App = () => {
               <Blog
                 key={blog.id}
                 blog={blog}
-                loggedInUser={loggedInUser}
                 onDelete={onDelete}
               />
             )}
