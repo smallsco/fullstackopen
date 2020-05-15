@@ -8,17 +8,12 @@ import Blog from './components/Blog'
 import LoginForm from './components/LoginForm'
 import Notification from './components/Notification'
 import blogService from './services/blogs'
-import { createInitAction } from './reducers/blogReducer'
-import { createNotificationAction } from './reducers/notificationReducer'
+import { createDeleteBlogAction, createInitAction } from './reducers/blogReducer'
 
 
 const App = () => {
   const dispatch = useDispatch()
-
   const [loggedInUser, setLoggedInUser] = useState(null)
-
-  // temporary to prevent crashing until port to redux is complete
-  const setBlogs = null
 
   // Get all blogs when component renders.
   useEffect(() => {
@@ -46,18 +41,7 @@ const App = () => {
   // Deletes a blog
   const onDelete = async (blog) => {
     if (window.confirm(`Are you sure you want to remove the blog "${blog.title}"?`)) {
-      try {
-        const response = await blogService.deleteBlog(blog.id)
-        if ({}.hasOwnProperty.call(response, 'error')) {
-          dispatch(createNotificationAction('error', response.error))
-        }
-        else {
-          setBlogs(blogs.filter(b => (b.id !== blog.id)))
-        }
-      }
-      catch (error) {
-        dispatch(createNotificationAction('error', error.message))
-      }
+      dispatch(createDeleteBlogAction(blog.id))
     }
   }
 
@@ -85,7 +69,6 @@ const App = () => {
               <Blog
                 key={blog.id}
                 blog={blog}
-                blogService={blogService}
                 loggedInUser={loggedInUser}
                 onDelete={onDelete}
               />

@@ -4,11 +4,11 @@ import { useDispatch } from 'react-redux'
 import PropTypes from 'prop-types'
 
 // My Imports
-import { createNotificationAction } from '../reducers/notificationReducer'
+import { createLikeAction } from '../reducers/blogReducer'
 
 const Blog = (props) => {
 
-  const { blog, blogService, loggedInUser, onDelete } = props
+  const { blog, loggedInUser, onDelete } = props
 
   // Blog appearance
   const blogStyle = {
@@ -20,26 +20,14 @@ const Blog = (props) => {
 
   const dispatch = useDispatch()
 
-  // Default blogs to unexpanded and copy likes from props to state
+  // Default blogs to unexpanded
   const [visible, setVisible] = useState(false)
-  const [likes, setLikes] = useState(blog.likes)
 
   // When clicking the like button we update the DB and then increment the
   // like count in the state by one
   const onLike = async (event) => {
     event.preventDefault()
-    try {
-      const response = await blogService.likeBlog(blog)
-      if ({}.hasOwnProperty.call(response, 'error')) {
-        dispatch(createNotificationAction('error', response.error))
-      }
-      else {
-        setLikes(likes + 1)
-      }
-    }
-    catch (error) {
-      dispatch(createNotificationAction('error', error.message))
-    }
+    dispatch(createLikeAction(blog))
   }
 
   // Render blog to screen
@@ -51,7 +39,7 @@ const Blog = (props) => {
           <button onClick={() => setVisible(false)}>Hide Details</button><br />
           &nbsp;<br />
           <a href={blog.url}>{blog.url}</a><br />
-          {likes} likes <button onClick={onLike}>Like!</button><br />
+          {blog.likes} likes <button onClick={onLike}>Like!</button><br />
           posted by {blog.user ? blog.user.name : 'Missing User'}
           {blog.user && loggedInUser.id === blog.user.id &&
             <>
@@ -70,7 +58,6 @@ const Blog = (props) => {
 
 Blog.propTypes = {
   blog: PropTypes.object.isRequired,
-  blogService: PropTypes.object.isRequired,
   loggedInUser: PropTypes.object.isRequired,
   onDelete: PropTypes.func.isRequired
 }
