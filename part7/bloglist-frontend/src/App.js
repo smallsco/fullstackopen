@@ -1,6 +1,6 @@
 // Third-Party Imports
 import React, { useState, useEffect } from 'react'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 
 // My Imports
 import AddBlogForm from './components/AddBlogForm'
@@ -8,21 +8,23 @@ import Blog from './components/Blog'
 import LoginForm from './components/LoginForm'
 import Notification from './components/Notification'
 import blogService from './services/blogs'
+import { createInitAction } from './reducers/blogReducer'
 import { createNotificationAction } from './reducers/notificationReducer'
 
 
 const App = () => {
   const dispatch = useDispatch()
 
-  const [blogs, setBlogs] = useState([])
   const [loggedInUser, setLoggedInUser] = useState(null)
+
+  // temporary to prevent crashing until port to redux is complete
+  const setBlogs = null
 
   // Get all blogs when component renders.
   useEffect(() => {
-    blogService.getAll().then(blogs =>
-      setBlogs(blogs.sort((a, b) => b.likes - a.likes))
-    )
-  }, [])
+    dispatch(createInitAction())
+  }, [dispatch])
+  const blogs = useSelector(state => state.blogs)
 
   // Check local storage when component renders to see if a user is currently
   // logged in.
@@ -76,11 +78,7 @@ const App = () => {
             Welcome, {loggedInUser.name}!
             <button onClick={onLogout}>Logout</button>
           </p>
-          <AddBlogForm
-            blogService={blogService}
-            blogs={blogs}
-            setBlogs={setBlogs}
-          />
+          <AddBlogForm />
           <h2>Blogs</h2>
           <div id='bloglist'>
             {blogs.map(blog =>

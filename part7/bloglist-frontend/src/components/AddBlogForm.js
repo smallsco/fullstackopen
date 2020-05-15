@@ -1,17 +1,11 @@
 // Third-Party Imports
 import React, { useState } from 'react'
 import { useDispatch } from 'react-redux'
-import PropTypes from 'prop-types'
 
 // My Imports
-import { createNotificationAction } from '../reducers/notificationReducer'
+import { createNewBlogAction } from '../reducers/blogReducer'
 
-const AddBlogForm = (props) => {
-  const {
-    blogService,
-    blogs, setBlogs,
-  } = props
-
+const AddBlogForm = () => {
   const dispatch = useDispatch()
 
   const [title, setTitle] = useState('')
@@ -26,25 +20,11 @@ const AddBlogForm = (props) => {
 
   const onAdd = async (event) => {
     event.preventDefault()
-    try {
-      const newBlog = await blogService.addBlog({ title, author, url })
-      if ({}.hasOwnProperty.call(newBlog, 'error')) {
-        dispatch(createNotificationAction('error', newBlog.error))
-      }
-      else {
-        setBlogs([...blogs, newBlog])
-        dispatch(createNotificationAction('success',
-          `Added blog "${newBlog.title}" by author "${newBlog.author}"`
-        ))
-      }
-      setTitle('')
-      setAuthor('')
-      setURL('')
-      setVisible(false)
-    }
-    catch (error) {
-      dispatch(createNotificationAction('error', error.message))
-    }
+    dispatch(createNewBlogAction({ title, author, url }))
+    setTitle('')
+    setAuthor('')
+    setURL('')
+    setVisible(false)
   }
 
   return (
@@ -66,12 +46,6 @@ const AddBlogForm = (props) => {
       </form>
     </div>
   )
-}
-
-AddBlogForm.propTypes = {
-  blogService: PropTypes.object.isRequired,
-  blogs: PropTypes.arrayOf(PropTypes.object).isRequired,
-  setBlogs: PropTypes.func.isRequired,
 }
 
 export default AddBlogForm
