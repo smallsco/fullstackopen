@@ -13,6 +13,28 @@ blogsRouter.get('/', async (request, response) => {
   return response.json(blogs.map(blog => blog.toJSON()))
 })
 
+// Add new comment to an existing blog
+blogsRouter.post('/:id/comments', async (request, response) => {
+
+  // Validate input
+  if (!{}.hasOwnProperty.call(request.body, 'comment') || ({}.hasOwnProperty.call(request.body, 'comment') && request.body.comment === '')) {
+    return response.status(400).json({ error: 'Missing comment property' })
+  }
+
+  // Look up the blog to comment on
+  const blog = await Blog.findById(request.params.id)
+  if (!blog) {
+    return response.status(400).json({ error: 'Invalid blog ID' })
+  }
+
+  // Add the comment
+  blog.comments = blog.comments.concat(request.body.comment)
+  await blog.save()
+
+  return response.status(201).json(blog)
+
+})
+
 // Add new blog
 blogsRouter.post('/', async (request, response) => {
 
@@ -38,7 +60,8 @@ blogsRouter.post('/', async (request, response) => {
     author: request.body.author,
     url: request.body.url,
     likes: request.body.likes === undefined ? 0 : request.body.likes,
-    user: loggedInUser._id
+    user: loggedInUser._id,
+    comments: []
   })
   const savedBlog = await blog.save()
 
@@ -76,7 +99,7 @@ blogsRouter.delete('/:id', async (request, response) => {
   }
 })
 
-// Update an existing blog's like count
+// Update an existing blog
 blogsRouter.put('/:id', async (request, response) => {
   if (!{}.hasOwnProperty.call(request.body, 'title')) {
     return response.status(400).json({ error: 'Missing title property' })
@@ -89,7 +112,8 @@ blogsRouter.put('/:id', async (request, response) => {
     title: request.body.title,
     author: request.body.author,
     url: request.body.url,
-    likes: request.body.likes === undefined ? 0 : request.body.likes
+    likes: request.body.likes === undefined ? 0 : request.body.likes,
+    comments: request.body.comments
   }
 
   const updatedBlog = await Blog.findByIdAndUpdate(request.params.id, newBlog, { new: true })

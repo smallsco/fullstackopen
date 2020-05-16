@@ -43,6 +43,10 @@ const BlogView = ({ blog }) => {
           <button onClick={() => onDelete(blog)}>Delete</button>
         </>
       }
+      <h3>Comments</h3>
+      <ul>
+        {blog.comments.map(comment => <li key={comment}>{comment}</li>)}
+      </ul>
     </>
   )
 }
