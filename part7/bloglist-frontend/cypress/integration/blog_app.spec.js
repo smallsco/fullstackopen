@@ -69,8 +69,7 @@ describe('Blog app', function() {
       cy.contains('Added blog "Test Title" by author "Test Author"')
 
       // blog shows up
-      cy.contains('Test Title - Test Author')
-      cy.contains('View Details').click()
+      cy.contains('Test Title - Test Author').click()
       cy.contains('http://www.example.com')
       cy.contains('0 likes')
       cy.contains('posted by Test User')
@@ -83,7 +82,7 @@ describe('Blog app', function() {
 
       it('a blog can be liked', function() {
         // like the blog
-        cy.contains('View Details').click()
+        cy.contains('Test Title - Test Author').click()
         cy.contains('Like!').click()
 
         // blog was liked
@@ -92,7 +91,7 @@ describe('Blog app', function() {
 
       it('a blog can be deleted by the user who created it', function() {
         // delete the blog
-        cy.contains('View Details').click()
+        cy.contains('Test Title - Test Author').click()
         cy.contains('Delete').click()
 
         // blog does not exist
@@ -104,7 +103,7 @@ describe('Blog app', function() {
         cy.login({ username: 'tuser2', password: 'tpassword2' })
 
         // the delete button does not exist
-        cy.contains('View Details').click()
+        cy.contains('Test Title - Test Author').click()
         cy.contains('Delete').should('not.exist')
       })
 
@@ -121,15 +120,10 @@ describe('Blog app', function() {
         cy.get('#bloglist').children().eq(1).as('second')
         cy.get('#bloglist').children().eq(2).as('third')
 
-        // show the likes for each of the blogs
-        cy.get('@first').contains('View Details').click()
-        cy.get('@second').contains('View Details').click()
-        cy.get('@third').contains('View Details').click()
-
         // the order on the page is sorted by likes descending
-        cy.get('@first').contains('2 likes')
-        cy.get('@second').contains('1 likes')
-        cy.get('@third').contains('0 likes')
+        cy.get('@first').contains('Test Title 2 - Test Author 2')
+        cy.get('@second').contains('Test Title 3 - Test Author 3')
+        cy.get('@third').contains('Test Title - Test Author')
       })
     })
 

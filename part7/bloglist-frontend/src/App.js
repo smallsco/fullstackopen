@@ -5,12 +5,13 @@ import { Switch, Route, useRouteMatch } from 'react-router-dom'
 
 // My Imports
 import AddBlogForm from './components/AddBlogForm'
-import Blog from './components/Blog'
+import BlogList from './components/BlogList'
+import BlogView from './components/BlogView'
 import LoginForm from './components/LoginForm'
 import Notification from './components/Notification'
 import UserList from './components/UserList'
 import UserView from './components/UserView'
-import { createDeleteBlogAction, createInitBlogsAction } from './reducers/blogReducer'
+import { createInitBlogsAction } from './reducers/blogReducer'
 import { createLoginActionFromUser, createLogoutAction } from './reducers/loginReducer'
 import { createInitUsersAction } from './reducers/userReducer'
 
@@ -42,19 +43,17 @@ const App = () => {
     dispatch(createLogoutAction())
   }
 
-  // Deletes a blog
-  const onDelete = async (blog) => {
-    if (window.confirm(`Are you sure you want to remove the blog "${blog.title}"?`)) {
-      dispatch(createDeleteBlogAction(blog.id))
-    }
-  }
-
   // Look for a user ID in the URL and
   // get the corresponding user if it exists
-  const match = useRouteMatch('/user/:id')
-  const userToView = match ? users.find(u => u.id === match.params.id) : null
+  const userMatch = useRouteMatch('/user/:id')
+  const userToView = userMatch ? users.find(u => u.id === userMatch.params.id) : null
 
-  // Render blogs or login form
+  // Look for a blog ID in the URL and
+  // get the corresponding blog if it exists
+  const blogMatch = useRouteMatch('/blog/:id')
+  const blogToView = blogMatch ? blogs.find(b => b.id === blogMatch.params.id) : null
+
+  // Render correct part of app based on route
   return (
     <>
       <Notification />
@@ -69,6 +68,9 @@ const App = () => {
             <button onClick={onLogout}>Logout</button>
           </p>
           <Switch>
+            <Route path='/blog/:id'>
+              <BlogView blog={blogToView} />
+            </Route>
             <Route path='/user/:id'>
               <UserView user={userToView} />
             </Route>
@@ -77,16 +79,7 @@ const App = () => {
             </Route>
             <Route path='/'>
               <AddBlogForm />
-              <h2>Blogs</h2>
-              <div id='bloglist'>
-                {blogs.map(blog =>
-                  <Blog
-                    key={blog.id}
-                    blog={blog}
-                    onDelete={onDelete}
-                  />
-                )}
-              </div>
+              <BlogList />
             </Route>
           </Switch>
         </div>
