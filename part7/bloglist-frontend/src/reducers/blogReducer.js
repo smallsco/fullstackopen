@@ -12,6 +12,15 @@ const blogReducer = (state = [], action) => {
       return action.data
     }
 
+    // Comment on a blog
+    case 'COMMENT': {
+      const blogToUpdate = state.find(blog => blog.id === action.data.id)
+      const updatedBlog = { ...blogToUpdate, comments: blogToUpdate.comments.concat(action.data.comment) }
+      return state.map(blog => (
+        blog.id === updatedBlog.id ? updatedBlog : blog
+      ))
+    }
+
     // Like a blog
     case 'LIKE': {
       const blogToUpdate = state.find(blog => blog.id === action.data.id)
@@ -46,6 +55,27 @@ export const createInitBlogsAction = () => {
       type: 'INIT_BLOGS',
       data: blogs.sort((a, b) => b.likes - a.likes)
     })
+  }
+}
+
+// Action creator function for commenting on a blog
+export const createCommentAction = (id, comment) => {
+  return async (dispatch) => {
+    try {
+      const response = await blogService.addComment(id, { comment })
+      if ({}.hasOwnProperty.call(response, 'error')) {
+        dispatch(createNotificationAction('error', response.error))
+      }
+      else {
+        dispatch({
+          type: 'COMMENT',
+          data: { id, comment }
+        })
+      }
+    }
+    catch (error) {
+      dispatch(createNotificationAction('error', error.message))
+    }
   }
 }
 

@@ -13,6 +13,27 @@ const getAll = () => {
   return request.then(response => response.data)
 }
 
+// Add a comment to an existing blog
+const addComment = async (id, comment) => {
+  try {
+    const response = await axios.post(`${baseUrl}/${id}/comments`, comment)
+    return response.data
+  }
+  catch (error) {
+    if (error.response.data.error) {
+      // backend returns errors as json
+      return error.response.data
+    }
+    else if (error.response.data) {
+      // handle proxy errors which are returned by strings
+      return { error: error.response.data }
+    }
+    else {
+      return { error: 'Unknown error occurred during add comment. Check backend logs.' }
+    }
+  }
+}
+
 // Add a new blog
 const addBlog = async (blog) => {
   try {
@@ -90,4 +111,4 @@ const deleteBlog = async (id) => {
   }
 }
 
-export default { getAll, addBlog, likeBlog, deleteBlog, setToken }
+export default { getAll, addBlog, likeBlog, deleteBlog, setToken, addComment }

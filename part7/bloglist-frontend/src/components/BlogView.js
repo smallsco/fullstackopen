@@ -1,15 +1,21 @@
 // Third-Party Imports
-import React from 'react'
+import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useHistory } from 'react-router-dom'
 
 // My Imports
-import { createLikeAction, createDeleteBlogAction } from '../reducers/blogReducer'
+import {
+  createCommentAction,
+  createLikeAction,
+  createDeleteBlogAction
+} from '../reducers/blogReducer'
+
 
 const BlogView = ({ blog }) => {
 
   const dispatch = useDispatch()
   const history = useHistory()
+  const [comment, setComment] = useState('')
   const loggedInUser = useSelector(state => state.loggedInUser)
 
   if (!blog) {
@@ -31,6 +37,13 @@ const BlogView = ({ blog }) => {
     dispatch(createLikeAction(blog))
   }
 
+  // Add comment functionality
+  const onComment = async (event) => {
+    event.preventDefault()
+    dispatch(createCommentAction(blog.id, comment))
+    setComment('')
+  }
+
   return (
     <>
       <h2>{blog.title} - {blog.author}</h2>
@@ -44,6 +57,10 @@ const BlogView = ({ blog }) => {
         </>
       }
       <h3>Comments</h3>
+      <form onSubmit={onComment}>
+        <input id='comment' type='text' value={comment} onChange={(event) => setComment(event.target.value)} />&nbsp;
+        <button id='addComment' type='submit'>Add Comment</button>
+      </form>
       <ul>
         {blog.comments.map(comment => <li key={comment}>{comment}</li>)}
       </ul>
