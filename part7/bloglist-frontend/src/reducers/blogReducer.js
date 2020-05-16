@@ -1,6 +1,7 @@
 // My Imports
 import blogService from '../services/blogs'
 import { createNotificationAction } from './notificationReducer'
+import { createInitUsersAction } from './userReducer'
 
 // Reducer
 const blogReducer = (state = [], action) => {
@@ -82,6 +83,7 @@ export const createNewBlogAction = (content) => {
           type: 'NEW',
           data: newBlog
         })
+        dispatch(createInitUsersAction())
         dispatch(createNotificationAction('success',
           `Added blog "${newBlog.title}" by author "${newBlog.author}"`
         ))
@@ -105,6 +107,7 @@ export const createDeleteBlogAction = (id) => {
           type: 'DELETE',
           data: { id }
         })
+        dispatch(createInitUsersAction())
       }
     }
     catch (error) {

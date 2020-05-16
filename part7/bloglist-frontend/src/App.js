@@ -8,11 +8,12 @@ import AddBlogForm from './components/AddBlogForm'
 import BlogList from './components/BlogList'
 import BlogView from './components/BlogView'
 import LoginForm from './components/LoginForm'
+import Menu from './components/Menu'
 import Notification from './components/Notification'
 import UserList from './components/UserList'
 import UserView from './components/UserView'
 import { createInitBlogsAction } from './reducers/blogReducer'
-import { createLoginActionFromUser, createLogoutAction } from './reducers/loginReducer'
+import { createLoginActionFromUser } from './reducers/loginReducer'
 import { createInitUsersAction } from './reducers/userReducer'
 
 
@@ -38,11 +39,6 @@ const App = () => {
     }
   }, [dispatch])
 
-  // Logs out a user
-  const onLogout = () => {
-    dispatch(createLogoutAction())
-  }
-
   // Look for a user ID in the URL and
   // get the corresponding user if it exists
   const userMatch = useRouteMatch('/user/:id')
@@ -56,33 +52,35 @@ const App = () => {
   // Render correct part of app based on route
   return (
     <>
-      <Notification />
       {!loggedInUser.id &&
-        <LoginForm />
+        <>
+          <Notification />
+          <LoginForm />
+        </>
       }
       {loggedInUser.id &&
-        <div>
-          <h1>Blog App</h1>
-          <p>
-            Welcome, {loggedInUser.name}!
-            <button onClick={onLogout}>Logout</button>
-          </p>
-          <Switch>
-            <Route path='/blog/:id'>
-              <BlogView blog={blogToView} />
-            </Route>
-            <Route path='/user/:id'>
-              <UserView user={userToView} />
-            </Route>
-            <Route path='/users'>
-              <UserList />
-            </Route>
-            <Route path='/'>
-              <AddBlogForm />
-              <BlogList />
-            </Route>
-          </Switch>
-        </div>
+        <>
+          <Menu />
+          <Notification />
+          <div>
+            <h1>Blog App</h1>
+            <Switch>
+              <Route path='/blog/:id'>
+                <BlogView blog={blogToView} />
+              </Route>
+              <Route path='/user/:id'>
+                <UserView user={userToView} />
+              </Route>
+              <Route path='/users'>
+                <UserList />
+              </Route>
+              <Route path='/'>
+                <AddBlogForm />
+                <BlogList />
+              </Route>
+            </Switch>
+          </div>
+        </>
       }
     </>
   )
