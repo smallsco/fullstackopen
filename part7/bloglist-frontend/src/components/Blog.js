@@ -19,7 +19,7 @@ const Blog = (props) => {
   }
 
   const dispatch = useDispatch()
-  const loggedInUser = useSelector(state => state.user)
+  const loggedInUser = useSelector(state => state.loggedInUser)
 
   // Default blogs to unexpanded
   const [visible, setVisible] = useState(false)

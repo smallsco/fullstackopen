@@ -1,12 +1,10 @@
 // Third-Party Imports
-import _ from 'lodash'
 import React from 'react'
 import { useSelector } from 'react-redux'
+import { Link } from 'react-router-dom'
 
 const UserList = () => {
-
-  const blogs = useSelector(state => state.blogs)
-  const numBlogsByUser = _.countBy(blogs, blog => blog.user.name)
+  const users = useSelector(state => state.users)
 
   return (
     <>
@@ -19,10 +17,10 @@ const UserList = () => {
           </tr>
         </thead>
         <tbody>
-          {Object.keys(numBlogsByUser).map(author => (
-            <tr key={author}>
-              <td>{author}</td>
-              <td>{numBlogsByUser[author]}</td>
+          {users.map(user => (
+            <tr key={user.name}>
+              <td><Link to={`/user/${user.id}`}>{user.name}</Link></td>
+              <td>{user.blogs.length}</td>
             </tr>
           ))}
         </tbody>

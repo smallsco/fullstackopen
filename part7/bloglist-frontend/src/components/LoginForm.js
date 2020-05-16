@@ -3,7 +3,7 @@ import React, { useState } from 'react'
 import { useDispatch } from 'react-redux'
 
 // My Imports
-import { createLoginActionFromCredentials } from '../reducers/userReducer'
+import { createLoginActionFromCredentials } from '../reducers/loginReducer'
 
 const LoginForm = () => {
   const dispatch = useDispatch()

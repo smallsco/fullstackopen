@@ -1,28 +1,13 @@
 // My Imports
-import blogService from '../services/blogs'
-import loginService from '../services/login'
-import { createNotificationAction } from './notificationReducer'
-
-// User Fixture Data
-const defaultUserObject = {
-  id: null,
-  name: null,
-  token: null,
-  username: null
-}
+import userService from '../services/users'
 
 // Reducer
-const userReducer = (state = defaultUserObject, action) => {
+const userReducer = (state = [], action) => {
   switch(action.type) {
 
-    // Log user in
-    case 'LOGIN': {
+    // Initialize user list from fixed data
+    case 'INIT_USERS': {
       return action.data
-    }
-
-    // Log user out
-    case 'LOGOUT': {
-      return defaultUserObject
     }
 
     // Do nothing otherwise
@@ -32,48 +17,16 @@ const userReducer = (state = defaultUserObject, action) => {
   }
 }
 
-// Action creator function for logging out a user
-export const createLogoutAction = () => {
+// Action creator function for initializing user list
+export const createInitUsersAction = () => {
   return async (dispatch) => {
-    window.localStorage.removeItem('fsoblogapp.loggedinuser')
-    blogService.setToken(null)
+    const users = await userService.getAll()
     dispatch({
-      type: 'LOGOUT'
+      type: 'INIT_USERS',
+      data: users
     })
   }
 }
 
-// Action creator function for logging in a user from their credentials
-export const createLoginActionFromCredentials = ({ username, password }) => {
-  return async (dispatch) => {
-    try {
-      const user = await loginService.login(username, password)
-      if ({}.hasOwnProperty.call(user, 'error')) {
-        dispatch(createNotificationAction('error', user.error))
-      }
-      else {
-        dispatch(createLoginActionFromUser(user))
-      }
-    }
-    catch (error) {
-      dispatch(createNotificationAction('error', error.message))
-    }
-  }
-}
-
-// Logs a user in from an existing user object (i.e. from local storage)
-export const createLoginActionFromUser = (user) => {
-  return async (dispatch) => {
-    window.localStorage.setItem(
-      'fsoblogapp.loggedinuser',
-      JSON.stringify(user)
-    )
-    blogService.setToken(user.token)
-    dispatch({
-      type: 'LOGIN',
-      data: user
-    })
-  }
-}
 
 export default userReducer

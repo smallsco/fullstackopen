@@ -7,7 +7,7 @@ const blogReducer = (state = [], action) => {
   switch(action.type) {
 
     // Initialize blog list from fixed data
-    case 'INIT': {
+    case 'INIT_BLOGS': {
       return action.data
     }
 
@@ -38,11 +38,11 @@ const blogReducer = (state = [], action) => {
 }
 
 // Action creator function for initializing blog list
-export const createInitAction = () => {
+export const createInitBlogsAction = () => {
   return async (dispatch) => {
     const blogs = await blogService.getAll()
     dispatch({
-      type: 'INIT',
+      type: 'INIT_BLOGS',
       data: blogs.sort((a, b) => b.likes - a.likes)
     })
   }
