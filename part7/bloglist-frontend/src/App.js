@@ -2,6 +2,7 @@
 import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Switch, Route, useRouteMatch } from 'react-router-dom'
+import { CssBaseline, Container, Grid } from '@material-ui/core'
 
 // My Imports
 import AddBlogForm from './components/AddBlogForm'
@@ -51,7 +52,8 @@ const App = () => {
 
   // Render correct part of app based on route
   return (
-    <>
+    <Container>
+      <CssBaseline />
       {!loggedInUser.id &&
         <>
           <Notification />
@@ -63,7 +65,6 @@ const App = () => {
           <Menu />
           <Notification />
           <div>
-            <h1>Blog App</h1>
             <Switch>
               <Route path='/blog/:id'>
                 <BlogView blog={blogToView} />
@@ -75,14 +76,20 @@ const App = () => {
                 <UserList />
               </Route>
               <Route path='/'>
-                <AddBlogForm />
-                <BlogList />
+                <Grid container spacing={3}>
+                  <Grid item xs={6}>
+                    <AddBlogForm />
+                  </Grid>
+                  <Grid item xs={6}>
+                    <BlogList />
+                  </Grid>
+                </Grid>
               </Route>
             </Switch>
           </div>
         </>
       }
-    </>
+    </Container>
   )
 }
 

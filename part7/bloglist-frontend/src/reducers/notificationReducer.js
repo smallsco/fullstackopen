@@ -30,11 +30,7 @@ const notificationReducer = (state = defaultNotificationObject, action) => {
 
     // Hide an existing notification
     case 'HIDE_NOTIFICATION':
-      return {
-        type: null,
-        notification: null,
-        timeoutID: null
-      }
+      return defaultNotificationObject
 
     // Do nothing otherwise
     default:

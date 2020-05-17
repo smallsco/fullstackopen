@@ -1,6 +1,7 @@
 // Third-Party Imports
 import React, { useState } from 'react'
 import { useDispatch } from 'react-redux'
+import { Box, Button, Grid, Paper, TextField, Typography } from '@material-ui/core'
 
 // My Imports
 import { createNewBlogAction } from '../reducers/blogReducer'
@@ -28,23 +29,63 @@ const AddBlogForm = () => {
   }
 
   return (
-    <div>
-      <h2>Add New Blog</h2>
+    <>
+      <Typography variant='h5' gutterBottom>
+        Add New Blog
+      </Typography>
       <form onSubmit={onAdd}>
         { !visible &&
-          <button onClick={toggleVisibility}>Show Form</button>
+          <Button variant="contained" color="secondary" onClick={toggleVisibility}>
+            Show Form
+          </Button>
         }
         { visible &&
-          <>
-            Title: <input id='title' type='text' value={title} onChange={(event) => setTitle(event.target.value)} /><br />
-            Author: <input id='author' type='text' value={author} onChange={(event) => setAuthor(event.target.value)} /><br />
-            URL: <input id='url' type='text' value={url} onChange={(event) => setURL(event.target.value)} /><br />
-            <button id='addBlog' type='submit'>Add New Blog</button>
-            <button onClick={toggleVisibility}>Hide Form</button>
-          </>
+          <Box component={Paper} p={2}>
+            <TextField
+              fullWidth
+              required
+              margin='normal'
+              label='Title'
+              variant='outlined'
+              id='title'
+              value={title}
+              onChange={(event) => setTitle(event.target.value)}
+            />
+            <TextField
+              fullWidth
+              margin='normal'
+              label='Author'
+              variant='outlined'
+              id='author'
+              value={author}
+              onChange={(event) => setAuthor(event.target.value)}
+            />
+            <TextField
+              fullWidth
+              required
+              margin='normal'
+              label='URL'
+              variant='outlined'
+              id='url'
+              value={url}
+              onChange={(event) => setURL(event.target.value)}
+            />
+            <Grid container spacing={3} direction="row" justify="center" alignItems="center">
+              <Grid item xs>
+                <Button fullWidth id='addBlog' type='submit' variant="contained" color="primary">
+                  Add New Blog
+                </Button>
+              </Grid>
+              <Grid item xs>
+                <Button fullWidth variant="contained" onClick={toggleVisibility}>
+                  Hide Form
+                </Button>
+              </Grid>
+            </Grid>
+          </Box>
         }
       </form>
-    </div>
+    </>
   )
 }
 

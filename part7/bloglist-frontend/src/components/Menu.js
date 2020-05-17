@@ -2,6 +2,7 @@
 import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
+import { AppBar, Box, Button, Toolbar, Typography } from '@material-ui/core'
 
 // My Imports
 import { createLogoutAction } from '../reducers/loginReducer'
@@ -16,12 +17,26 @@ const Menu = () => {
   }
 
   return (
-    <div className='menu-background'>
-      <Link to='/' className='menu-padding'>Blogs</Link>
-      <Link to='/users' className='menu-padding'>Users</Link>
-      <span className='menu-padding'>Welcome, {loggedInUser.name}!</span>
-      <button onClick={onLogout}>Logout</button>
-    </div>
+    <Box mb={1} mt={1}>
+      <AppBar position='static' color='inherit' elevation={1} square={false}>
+        <Toolbar>
+          <Box mr={2}>
+            <Typography variant='h6'>
+              Blog App
+            </Typography>
+          </Box>
+          <Button component={Link} to='/' color='inherit'>Blogs</Button>
+          <Button component={Link} to='/users' color='inherit'>Users</Button>
+          <div style={{ flexGrow: 1 }} />
+          <Box mr={2}>
+            <Typography variant='subtitle2'>
+              Welcome, {loggedInUser.name}!
+            </Typography>
+          </Box>
+          <Button variant='contained' onClick={onLogout}>Logout</Button>
+        </Toolbar>
+      </AppBar>
+    </Box>
   )
 }
 

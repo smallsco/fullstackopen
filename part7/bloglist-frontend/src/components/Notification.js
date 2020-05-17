@@ -1,6 +1,8 @@
 // Third-Party Imports
 import React from 'react'
 import { useSelector } from 'react-redux'
+import { Box } from '@material-ui/core'
+import { Alert } from '@material-ui/lab'
 
 // Render Notification if one exists in the store
 const Notification = () => {
@@ -10,9 +12,11 @@ const Notification = () => {
   }
 
   return (
-    <div className={notification.type}>
-      {notification.message}
-    </div>
+    <Box mt={1} mb={2}>
+      <Alert id='notification' severity={notification.type}>
+        {notification.message}
+      </Alert>
+    </Box>
   )
 }
 

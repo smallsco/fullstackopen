@@ -2,6 +2,7 @@
 import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useHistory } from 'react-router-dom'
+import { Box, Button, Grid, Paper, TextField, Typography } from '@material-ui/core'
 
 // My Imports
 import {
@@ -46,24 +47,55 @@ const BlogView = ({ blog }) => {
 
   return (
     <>
-      <h2>{blog.title} - {blog.author}</h2>
-      <a href={blog.url}>{blog.url}</a><br />
-      {blog.likes} likes <button onClick={onLike}>Like!</button><br />
-      posted by {blog.user ? blog.user.name : 'Missing User'}
-      {blog.user && loggedInUser.id === blog.user.id &&
-        <>
-          &nbsp;<br />
-          <button onClick={() => onDelete(blog)}>Delete</button>
-        </>
-      }
-      <h3>Comments</h3>
-      <form onSubmit={onComment}>
-        <input id='comment' type='text' value={comment} onChange={(event) => setComment(event.target.value)} />&nbsp;
-        <button id='addComment' type='submit'>Add Comment</button>
-      </form>
-      <ul>
-        {blog.comments.map(comment => <li key={comment}>{comment}</li>)}
-      </ul>
+      <Grid container spacing={3}>
+        <Grid item xs={6}>
+          <Typography variant='h5' gutterBottom>
+            {blog.title} - {blog.author}
+          </Typography>
+          <Box component={Paper} p={2}>
+            URL: <a href={blog.url}>{blog.url}</a><br />
+            {blog.likes} likes <Button variant='contained' color='primary' onClick={onLike}>Like!</Button><br />
+            posted by {blog.user ? blog.user.name : 'Missing User'}
+            {blog.user && loggedInUser.id === blog.user.id &&
+              <>
+                &nbsp;<br />
+                <Button variant='contained' color='secondary' onClick={() => onDelete(blog)}>Delete</Button>
+              </>
+            }
+          </Box>
+        </Grid>
+        <Grid item xs={6}>
+          <Typography variant='h5' gutterBottom>
+            Comments
+          </Typography>
+          <Box component={Paper} p={2}>
+            <form onSubmit={onComment}>
+              <Grid container spacing={3} direction="row" justify="center" alignItems="center">
+                <Grid item xs>
+                  <TextField
+                    fullWidth
+                    required
+                    margin='normal'
+                    label='Comment'
+                    variant='outlined'
+                    id='comment'
+                    value={comment}
+                    onChange={(event) => setComment(event.target.value)}
+                  />
+                </Grid>
+                <Grid item xs>
+                  <Button fullWidth id='addComment' variant='contained' color='primary' type='submit'>
+                    Add Comment
+                  </Button>
+                </Grid>
+              </Grid>
+            </form>
+            <ul>
+              {blog.comments.map(comment => <li key={comment}>{comment}</li>)}
+            </ul>
+          </Box>
+        </Grid>
+      </Grid>
     </>
   )
 }

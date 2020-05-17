@@ -2,30 +2,27 @@
 import React from 'react'
 import { useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
+import { Box, List, ListItem, ListItemText, Paper, Typography } from '@material-ui/core'
 
 const BlogList = () => {
 
   // Get blogs from store
   const blogs = useSelector(state => state.blogs)
 
-  // Blog appearance
-  const blogStyle = {
-    padding: 10,
-    border: 'solid',
-    borderWidth: 1,
-    marginBottom: 5
-  }
-
   return (
     <>
-      <h2>Blogs</h2>
-      <div id='bloglist'>
-        {blogs.map(blog =>
-          <div key={blog.id} style={blogStyle} className='blog'>
-            <Link to={`/blog/${blog.id}`}>{blog.title} - {blog.author}</Link>
-          </div>
-        )}
-      </div>
+      <Typography variant='h5' gutterBottom>
+        Blogs
+      </Typography>
+      <Box component={Paper} >
+        <List dense id='bloglist'>
+          {blogs.map(blog =>
+            <ListItem button component={Link} to={`/blog/${blog.id}`} key={blog.id}>
+              <ListItemText primary={blog.title} secondary={blog.author} />
+            </ListItem>
+          )}
+        </List>
+      </Box>
     </>
   )
 }
