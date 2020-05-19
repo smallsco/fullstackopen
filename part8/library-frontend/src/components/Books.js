@@ -1,12 +1,28 @@
+// Third-Party Dependencies
 import React from 'react'
+import { useQuery } from '@apollo/client'
+
+// My Dependencies
+import { ALL_BOOKS } from '../queries'
+
 
 const Books = (props) => {
+
+  // Fetch the books from the backend using GraphQL
+  const result = useQuery(ALL_BOOKS)
+
+  // Do not show this page if we are showing another page
   if (!props.show) {
     return null
   }
 
-  const books = []
+  // Show a loading screen while fetching the books
+  if (result.loading)  {
+    return <div>Loading...</div>
+  }
 
+  // When we have fetched the books, render them
+  const books = result.data.allBooks
   return (
     <div>
       <h2>books</h2>
