@@ -1,12 +1,14 @@
 // Third-Party Imports
 require('dotenv').config()
-const { ApolloServer, UserInputError, gql } = require('apollo-server')
+const { ApolloServer, AuthenticationError, UserInputError, gql } = require('apollo-server')
 const mongoose = require('mongoose')
 const _ = require('lodash')
+const jwt = require('jsonwebtoken')
 
 // My Imports
 const Author = require('./models/author')
 const Book = require('./models/book')
+const User = require('./models/user')
 
 // Connect to MongoDB
 mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
@@ -30,11 +32,22 @@ const typeDefs = gql`
     id: ID!
   }
 
+  type User {
+    username: String!
+    favoriteGenre: String!
+    id: ID!
+  }
+
+  type Token {
+    value: String!
+  }
+
   type Query {
     authorCount: Int!
     allBooks(author: String, genre: String): [Book!]!
     allAuthors: [Author!]!
     bookCount: Int!
+    me: User
   }
 
   type Mutation {
@@ -48,6 +61,14 @@ const typeDefs = gql`
       name: String!
       setBornTo: Int!
     ): Author
+    createUser(
+      username: String!
+      favoriteGenre: String!
+    ): User
+    login(
+      username: String!
+      password: String!
+    ): Token
   }
 `
 
@@ -79,10 +100,14 @@ const resolvers = {
       const authors = await Author.find({})
       return authors.map(author => ({...author._doc, bookCount: Book.countDocuments({ author: author._id })}))
     },
-    bookCount: () => Book.estimatedDocumentCount()
+    bookCount: () => Book.estimatedDocumentCount(),
+    me: (root, args, context) => context.currentUser
   },
   Mutation: {
-    addBook: async (root, args) => {
+    addBook: async (root, args, context) => {
+      if (!context.currentUser) {
+        throw new AuthenticationError("Missing Authentication Token")
+      }
       let author = await Author.findOne({ name: args.author })
       if (!author) {
         author = new Author({
@@ -110,7 +135,10 @@ const resolvers = {
       newBook.author.bookCount = Book.countDocuments({ author: newBook.author._id })
       return newBook
     },
-    editAuthor: async (root, args) => {
+    editAuthor: async (root, args, context) => {
+      if (!context.currentUser) {
+        throw new AuthenticationError("Missing Authentication Token")
+      }
       const author = await Author.findOne({ name: args.name })
       author.born = args.setBornTo
       author.bookCount = Book.countDocuments({ author: author.id })
@@ -123,6 +151,30 @@ const resolvers = {
         })
       }
       return author
+    },
+    createUser: async (root, args) => {
+      const newUser = new User({...args})
+      try {
+        await newUser.save()
+      }
+      catch (error) {
+        throw new UserInputError(error.message, {
+          invalidArgs: args,
+        })
+      }
+      return newUser
+    },
+    login: async (root, args) => {
+      const user = await User.findOne({ username: args.username })
+      if (!user || args.password !== 'opensesame') {
+        throw new UserInputError('Incorrect username or password')
+      }
+      return {
+        value: jwt.sign({
+          username: user.username,
+          id: user._id,
+        }, process.env.JWT_SECRET)
+      }
     }
   }
 }
@@ -131,6 +183,14 @@ const resolvers = {
 const server = new ApolloServer({
   typeDefs,
   resolvers,
+  context: async ({req}) => {
+    const authHeader = req ? req.headers.authorization : null
+    if (authHeader && authHeader.toLowerCase().startsWith('bearer ')) {
+      const decodedToken = jwt.verify(authHeader.substring(7), process.env.JWT_SECRET)
+      const currentUser = await User.findById(decodedToken.id)
+      return { currentUser }
+    }
+  }
 })
 server.listen().then(({ url }) => {
   console.log(`Server ready at ${url}`)
