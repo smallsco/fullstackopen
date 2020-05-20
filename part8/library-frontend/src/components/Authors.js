@@ -1,5 +1,5 @@
 // Third-Party Dependencies
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useMutation, useQuery } from '@apollo/client'
 
 // My Dependencies
@@ -9,7 +9,7 @@ import { ALL_AUTHORS, EDIT_BIRTH_YEAR } from '../queries'
 const Authors = (props) => {
 
   // State for form fields
-  const [name, setName] = useState('')
+  const [name, setName] = useState()
   const [birthYear, setBirthYear] = useState('')
 
   // Fetch the authors from the backend using GraphQL
@@ -19,6 +19,13 @@ const Authors = (props) => {
   const [editBirthYear] = useMutation(EDIT_BIRTH_YEAR, {
     refetchQueries: [ { query: ALL_AUTHORS } ]
   })
+
+  // Make sure the author select has a sane default value
+  useEffect(() => {
+    if (!result.loading) {
+      setName(result.data.allAuthors[0].name)
+    }
+  }, [result.loading])  // eslint-disable-line
 
   // Do not show this page if we are showing another page
   if (!props.show) {
@@ -41,7 +48,6 @@ const Authors = (props) => {
       }
     })
 
-    setName('')
     setBirthYear('')
   }
 
@@ -75,10 +81,13 @@ const Authors = (props) => {
       <form onSubmit={submit}>
         <div>
           Name
-          <input
-            value={name}
-            onChange={({ target }) => setName(target.value)}
-          />
+          <select value={name} onChange={({ target }) => setName(target.value)}>
+            {authors.map(a =>
+              <option key={a.name} value={a.name}>
+                {a.name}
+              </option>
+            )}
+          </select>
         </div>
         <div>
           Birth Year
