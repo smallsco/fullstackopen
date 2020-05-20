@@ -2,6 +2,7 @@
 require('dotenv').config()
 const { ApolloServer, UserInputError, gql } = require('apollo-server')
 const mongoose = require('mongoose')
+const _ = require('lodash')
 
 // My Imports
 const Author = require('./models/author')
@@ -54,13 +55,29 @@ const typeDefs = gql`
 const resolvers = {
   Query: {
     authorCount: () => authors.length,
-    allBooks: (root, args) => {
-      return Book.find({})
-      // FIXME: need filtering for args.author / args.genre
+    allBooks: async (root, args) => {
+      let books
+      if (!args.genre) {
+        books = await Book.find({}).populate('author')
+      }
+      else {
+        books = await Book.find({ genres: { $in: [args.genre] } }).populate('author')
+      }
+      books = books.map(book => ({
+        ...book._doc,
+        id: book._doc._id,
+        author: {
+          ...book._doc.author._doc,
+          id: book._doc.author._doc._id,
+          bookCount: Book.countDocuments({ author: book._doc.author._doc._id })
+        }
+      }))
+      return books
+      // FIXME: need filtering for args.author
     },
-    allAuthors: () => {
-      return Author.find({})
-      // FIXME: need to implement bookCount for authors
+    allAuthors: async () => {
+      const authors = await Author.find({})
+      return authors.map(author => ({...author._doc, bookCount: Book.countDocuments({ author: author._id })}))
     },
     bookCount: () => Book.estimatedDocumentCount()
   },
@@ -90,17 +107,22 @@ const resolvers = {
           invalidArgs: args,
         })
       }
+      newBook.author.bookCount = Book.countDocuments({ author: newBook.author._id })
       return newBook
     },
-    editAuthor: (root, args) => {
-      // FIXME: needs update to work with the database
-      /*const authorToEdit = authors.find(author => author.name === args.name)
-      if (!authorToEdit) {
-        return null
+    editAuthor: async (root, args) => {
+      const author = await Author.findOne({ name: args.name })
+      author.born = args.setBornTo
+      author.bookCount = Book.countDocuments({ author: author.id })
+
+      try {
+        await author.save()
+      } catch (error) {
+        throw new UserInputError(error.message, {
+          invalidArgs: args,
+        })
       }
-      authorToEdit.born = args.setBornTo
-      authors = authors.map(author => author.name === args.name ? authorToEdit : author)
-      return authorToEdit*/
+      return author
     }
   }
 }
