@@ -6,6 +6,7 @@ import { useMutation } from '@apollo/client'
 import { ALL_AUTHORS, ALL_BOOKS, CREATE_BOOK } from '../queries'
 
 const NewBook = (props) => {
+  const [error, setError] = useState(null)
   const [title, setTitle] = useState('')
   const [author, setAuthor] = useState('')
   const [published, setPublished] = useState('')
@@ -14,7 +15,13 @@ const NewBook = (props) => {
 
   // When adding a new book keep the all books/authors views up to date
   const [createBook] = useMutation(CREATE_BOOK, {
-    refetchQueries: [ { query: ALL_BOOKS }, { query: ALL_AUTHORS } ]
+    refetchQueries: [ { query: ALL_BOOKS }, { query: ALL_AUTHORS } ],
+    onError: (error) => {
+      setError(error.graphQLErrors[0].message)
+      setTimeout(() => {
+        setError(null)
+      }, 5000)
+    }
   })
 
   // Do not show this page if we are showing another page
@@ -51,6 +58,12 @@ const NewBook = (props) => {
   // Renders the add new book form
   return (
     <div>
+      {error &&
+        <>
+          <br />
+          <span style={{color: 'red'}}>{error}</span>
+        </>
+      }
       <form onSubmit={submit}>
         <div>
           title
