@@ -1,6 +1,6 @@
 // Third-Party Dependencies
-import React from 'react'
-import { useQuery } from '@apollo/client'
+import React, { useEffect } from 'react'
+import { useLazyQuery } from '@apollo/client'
 
 // My Dependencies
 import { ALL_BOOKS, ME } from '../queries'
@@ -8,16 +8,31 @@ import { ALL_BOOKS, ME } from '../queries'
 
 const Recommendations = (props) => {
 
-  // Fetch the books from the backend using GraphQL
-  const result = useQuery(ALL_BOOKS)
-  const meResult = useQuery(ME)
+  // Set up the hooks for the graphql queries.
+  // The queries are chained so that getBooks will be run
+  // when getMe has completed and returned a result.
+  const [getBooks, result] = useLazyQuery(ALL_BOOKS)
+  const [getMe, meResult] = useLazyQuery(ME, {
+    onCompleted: (data) => {
+      getBooks({
+        variables: {genre: data.me.favoriteGenre}
+      })
+    }
+  })
 
-  // Do not show this page if we are showing another page
-  if (!props.show) {
+  // If we are logged in run the getMe query.
+  useEffect(() => {
+    if (props.token) {
+      getMe()
+    }
+  }, [getMe, props.token])
+
+  // Do not show this page if we are showing another page or not logged in
+  if (!props.show || !props.token) {
     return null
   }
 
-  // Show a loading screen while fetching the books
+  // Show a loading screen while fetching the books or current user
   if (result.loading || meResult.loading)  {
     return <div>Loading...</div>
   }

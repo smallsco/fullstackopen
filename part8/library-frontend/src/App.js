@@ -28,6 +28,7 @@ const App = () => {
     window.localStorage.removeItem('fsolibraryapp.loggedinuser')
     setToken(null)
     client.resetStore()
+    setPage('authors')
   }
 
   return (
@@ -55,6 +56,7 @@ const App = () => {
 
       <Recommendations
         show={page === 'recommendations'}
+        token={token}
       />
 
       <LoginForm
