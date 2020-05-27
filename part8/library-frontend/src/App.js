@@ -7,6 +7,7 @@ import Authors from './components/Authors'
 import Books from './components/Books'
 import LoginForm from './components/LoginForm'
 import NewBook from './components/NewBook'
+import Recommendations from './components/Recommendations'
 
 const App = () => {
   const [page, setPage] = useState('authors')
@@ -34,6 +35,7 @@ const App = () => {
       <div>
         <button onClick={() => setPage('authors')}>authors</button>
         <button onClick={() => setPage('books')}>books</button>
+        {token && <button onClick={() => setPage('recommendations')}>recommendations</button>}
         {token && <button onClick={() => setPage('add')}>add book</button>}
         {token && <button onClick={() => logout()}>logout</button>}
         {!token && <button onClick={() => setPage('login')}>login</button>}
@@ -49,6 +51,10 @@ const App = () => {
 
       <NewBook
         show={page === 'add'}
+      />
+
+      <Recommendations
+        show={page === 'recommendations'}
       />
 
       <LoginForm
