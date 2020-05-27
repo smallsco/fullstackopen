@@ -1,12 +1,16 @@
 // Third-Party Dependencies
-import React from 'react'
+import React, { useState } from 'react'
 import { useQuery } from '@apollo/client'
+import _ from 'lodash'
 
 // My Dependencies
 import { ALL_BOOKS } from '../queries'
 
 
 const Books = (props) => {
+
+  // Genre Filter State
+  const [filter, setFilter] = useState(null)
 
   // Fetch the books from the backend using GraphQL
   const result = useQuery(ALL_BOOKS)
@@ -23,6 +27,15 @@ const Books = (props) => {
 
   // When we have fetched the books, render them
   const books = result.data.allBooks
+
+  // Build unique list of genres for genre filter
+  let allGenres = []
+  books.forEach(book => {
+    allGenres = allGenres.concat(book.genres)
+  })
+  allGenres = _.uniq(allGenres)
+
+  // Render books
   return (
     <div>
       <h2>books</h2>
@@ -38,15 +51,21 @@ const Books = (props) => {
               published
             </th>
           </tr>
-          {books.map(a =>
-            <tr key={a.title}>
-              <td>{a.title}</td>
-              <td>{a.author.name}</td>
-              <td>{a.published}</td>
+          {books.map(book => (!filter || book.genres.includes(filter)) && (
+            <tr key={book.title}>
+              <td>{book.title}</td>
+              <td>{book.author.name}</td>
+              <td>{book.published}</td>
             </tr>
-          )}
+          ))}
         </tbody>
       </table>
+
+      {allGenres.map(genre =>
+        <button key={genre} onClick={() => setFilter(genre)}>{genre}</button>
+      )}
+      <button onClick={() => setFilter(null)}>all genres</button>
+
     </div>
   )
 }
