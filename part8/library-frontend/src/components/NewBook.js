@@ -1,9 +1,9 @@
 // Third-Party Dependencies
 import React, { useState } from 'react'
-import { useMutation } from '@apollo/client'
+import { useMutation, useQuery } from '@apollo/client'
 
 // My Dependencies
-import { ALL_AUTHORS, ALL_BOOKS, CREATE_BOOK } from '../queries'
+import { ALL_AUTHORS, ALL_BOOKS, CREATE_BOOK, ME } from '../queries'
 
 const NewBook = (props) => {
   const [error, setError] = useState(null)
@@ -13,7 +13,11 @@ const NewBook = (props) => {
   const [genre, setGenre] = useState('')
   const [genres, setGenres] = useState([])
 
+  // Get favourite genre
+  const meResult = useQuery(ME)
+
   // When adding a new book keep the all books/authors views up to date
+  // to keep recommendations up to date we manually update the cache
   const [createBook] = useMutation(CREATE_BOOK, {
     refetchQueries: [ { query: ALL_BOOKS }, { query: ALL_AUTHORS } ],
     onError: (error) => {
@@ -21,6 +25,22 @@ const NewBook = (props) => {
       setTimeout(() => {
         setError(null)
       }, 5000)
+    },
+    update: (store, response) => {
+      const dataInStore = store.readQuery({
+        query: ALL_BOOKS,
+        variables: {genre: meResult.data.me.favoriteGenre}
+      })
+      if (response.data.addBook.genres.includes(meResult.data.me.favoriteGenre)) {
+        store.writeQuery({
+          query: ALL_BOOKS,
+          variables: {genre: meResult.data.me.favoriteGenre},
+          data: {
+            ...dataInStore,
+            allBooks: [ ...dataInStore.allBooks, response.data.addBook ]
+          }
+        })
+      }
     }
   })
 
