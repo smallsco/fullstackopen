@@ -91,21 +91,12 @@ const resolvers = {
       else {
         books = await Book.find({ genres: { $in: [args.genre] } }).populate('author')
       }
-      books = books.map(book => ({
-        ...book._doc,
-        id: book._doc._id,
-        author: {
-          ...book._doc.author._doc,
-          id: book._doc.author._doc._id,
-          bookCount: Book.countDocuments({ author: book._doc.author._doc._id })
-        }
-      }))
       return books
       // FIXME: need filtering for args.author
     },
     allAuthors: async () => {
       const authors = await Author.find({})
-      return authors.map(author => ({...author._doc, bookCount: Book.countDocuments({ author: author._id })}))
+      return authors
     },
     bookCount: () => Book.estimatedDocumentCount(),
     me: (root, args, context) => context.currentUser
@@ -119,7 +110,8 @@ const resolvers = {
       if (!author) {
         author = new Author({
           name: args.author,
-          born: null
+          born: null,
+          bookCount: 1
         })
         try {
           await author.save()
@@ -130,6 +122,10 @@ const resolvers = {
           })
         }
       }
+      else {
+        author.bookCount = author.bookCount + 1
+        await author.save()
+      }
       const newBook = new Book({...args, author})
       try {
         await newBook.save()
@@ -139,7 +135,6 @@ const resolvers = {
           invalidArgs: args,
         })
       }
-      newBook.author.bookCount = Book.countDocuments({ author: newBook.author._id })
       pubsub.publish('BOOK_ADDED', { bookAdded: newBook })
       return newBook
     },
@@ -149,7 +144,6 @@ const resolvers = {
       }
       const author = await Author.findOne({ name: args.name })
       author.born = args.setBornTo
-      author.bookCount = Book.countDocuments({ author: author.id })
 
       try {
         await author.save()
