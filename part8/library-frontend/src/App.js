@@ -1,6 +1,6 @@
 // Third-Party Dependencies
 import React, { useEffect, useState } from 'react'
-import { useApolloClient } from '@apollo/client'
+import { useApolloClient, useSubscription } from '@apollo/client'
 
 // My Dependencies
 import Authors from './components/Authors'
@@ -8,6 +8,7 @@ import Books from './components/Books'
 import LoginForm from './components/LoginForm'
 import NewBook from './components/NewBook'
 import Recommendations from './components/Recommendations'
+import { BOOK_ADDED } from './queries'
 
 const App = () => {
   const [page, setPage] = useState('authors')
@@ -22,6 +23,14 @@ const App = () => {
       setToken(tokenString)
     }
   }, [])
+
+  // Pop an alert when a new book has been added
+  useSubscription(BOOK_ADDED, {
+    onSubscriptionData: ({ subscriptionData }) => {
+      const addedBook = subscriptionData.data.bookAdded
+      window.alert(`New book added: "${addedBook.title}" by "${addedBook.author.name}"`)
+    }
+  })
 
   // When a user clicks logout, log them out and clear app cache
   const logout = () => {
