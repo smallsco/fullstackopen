@@ -1,6 +1,6 @@
 // Third-Party Dependencies
 import React, { useEffect, useState } from 'react'
-import { useApolloClient, useSubscription } from '@apollo/client'
+import { useApolloClient, useLazyQuery, useSubscription } from '@apollo/client'
 
 // My Dependencies
 import Authors from './components/Authors'
@@ -8,29 +8,57 @@ import Books from './components/Books'
 import LoginForm from './components/LoginForm'
 import NewBook from './components/NewBook'
 import Recommendations from './components/Recommendations'
-import { BOOK_ADDED } from './queries'
+import { ALL_BOOKS, BOOK_ADDED, ME } from './queries'
 
 const App = () => {
   const [page, setPage] = useState('authors')
   const [token, setToken] = useState(null)
+  const [getMe, meResult] = useLazyQuery(ME)
   const client = useApolloClient()
 
+  // Keep all app views up to date when a book is added
+  // (from within the app or from an outside source)
+  useSubscription(BOOK_ADDED, {
+    onSubscriptionData: ({ subscriptionData }) => {
+      const addedBook = subscriptionData.data.bookAdded
+      const dataInStoreAllBooks = client.readQuery({
+        query: ALL_BOOKS
+      })
+      client.writeQuery({
+        query: ALL_BOOKS,
+        data: {
+          ...dataInStoreAllBooks,
+          allBooks: [ ...dataInStoreAllBooks.allBooks, addedBook ]
+        }
+      })
+      if (meResult.data) {
+        const dataInStoreFilteredBooks = client.readQuery({
+          query: ALL_BOOKS,
+          variables: {genre: meResult.data.me.favoriteGenre}
+        })
+        if (addedBook.genres.includes(meResult.data.me.favoriteGenre)) {
+          client.writeQuery({
+            query: ALL_BOOKS,
+            variables: {genre: meResult.data.me.favoriteGenre},
+            data: {
+              ...dataInStoreFilteredBooks,
+              allBooks: [ ...dataInStoreFilteredBooks.allBooks, addedBook ]
+            }
+          })
+        }
+      }
+    }
+  })
+
   // Check local storage when component renders to see if a user is currently
-  // logged in.
+  // logged in. If we are logged in run the getMe query.
   useEffect(() => {
     const tokenString = window.localStorage.getItem('fsolibraryapp.loggedinuser')
     if (tokenString) {
       setToken(tokenString)
+      getMe()
     }
-  }, [])
-
-  // Pop an alert when a new book has been added
-  useSubscription(BOOK_ADDED, {
-    onSubscriptionData: ({ subscriptionData }) => {
-      const addedBook = subscriptionData.data.bookAdded
-      window.alert(`New book added: "${addedBook.title}" by "${addedBook.author.name}"`)
-    }
-  })
+  }, [])  // eslint-disable-line
 
   // When a user clicks logout, log them out and clear app cache
   const logout = () => {
