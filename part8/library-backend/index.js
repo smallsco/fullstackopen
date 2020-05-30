@@ -1,6 +1,6 @@
 // Third-Party Imports
 require('dotenv').config()
-const { ApolloServer, AuthenticationError, UserInputError, gql } = require('apollo-server')
+const { ApolloServer, AuthenticationError, PubSub, UserInputError, gql } = require('apollo-server')
 const mongoose = require('mongoose')
 const _ = require('lodash')
 const jwt = require('jsonwebtoken')
@@ -14,6 +14,9 @@ const User = require('./models/user')
 mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
 mongoose.set('useCreateIndex', true)
 mongoose.set('useFindAndModify', false)
+
+// Set up Pub-Sub interface
+const pubsub = new PubSub()
 
 // GraphQL Schema
 const typeDefs = gql`
@@ -69,6 +72,10 @@ const typeDefs = gql`
       username: String!
       password: String!
     ): Token
+  }
+
+  type Subscription {
+    bookAdded: Book!
   }
 `
 
@@ -133,6 +140,7 @@ const resolvers = {
         })
       }
       newBook.author.bookCount = Book.countDocuments({ author: newBook.author._id })
+      pubsub.publish('BOOK_ADDED', { bookAdded: newBook })
       return newBook
     },
     editAuthor: async (root, args, context) => {
@@ -176,6 +184,11 @@ const resolvers = {
         }, process.env.JWT_SECRET)
       }
     }
+  },
+  Subscription: {
+    bookAdded: {
+      subscribe: () => pubsub.asyncIterator(['BOOK_ADDED'])
+    }
   }
 }
 
@@ -192,6 +205,7 @@ const server = new ApolloServer({
     }
   }
 })
-server.listen().then(({ url }) => {
+server.listen().then(({ url, subscriptionsUrl }) => {
   console.log(`Server ready at ${url}`)
+  console.log(`Subscriptions ready at ${subscriptionsUrl}`)
 })
