@@ -13,7 +13,7 @@ const calculateExercises = (args: Array<string>): ExerciseReport => {
   if (args.length < 4) {
     throw new Error('Incorrect number of arguments');
   }
-  const targetHours: number = Number(args[2]);
+  const targetHours = Number(args[2]);
   const weeklyReport: Array<number> = args.slice(3, args.length).map(hours => Number(hours));
   if (isNaN(targetHours)) {
     throw new Error('Target hours must be a number');
@@ -22,7 +22,7 @@ const calculateExercises = (args: Array<string>): ExerciseReport => {
     if (isNaN(hours)) {
       throw new Error('Weekly report must contain numbers');
     }
-  })
+  });
 
   // Calculate Exercise
   const trainingHours: number = weeklyReport.reduce((prev, current) => prev + current);
@@ -51,6 +51,6 @@ const calculateExercises = (args: Array<string>): ExerciseReport => {
     target: targetHours,
     average: averageHours
   };
-}
+};
 
 console.log(calculateExercises(process.argv));

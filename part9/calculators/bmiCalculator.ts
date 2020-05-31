@@ -13,7 +13,7 @@ export const calculateBmi = (height: number, weight: number): string => {
   else /*if (bmi >= 30)*/ {
     return 'Obese';
   }
-}
+};
 
 // Calculate BMI using command line args if the script was called directly
 if (require.main === module) {
@@ -23,8 +23,8 @@ if (require.main === module) {
   if (args.length != 4) {
     throw new Error('Incorrect number of arguments');
   }
-  const height: number = Number(args[2]);
-  const weight: number = Number(args[3]);
+  const height = Number(args[2]);
+  const weight = Number(args[3]);
   if (isNaN(height) || isNaN(weight)) {
     throw new Error('Height and Weight must be numbers');
   }
