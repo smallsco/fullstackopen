@@ -8,7 +8,8 @@ import patientsRouter from './routes/patients';
 
 // Init Express Framework
 const app = express();
-app.use(cors());  // eslint-disable-line @typescript-eslint/no-unsafe-call
+app.use(express.json());
+app.use(cors());
 
 // Routes
 app.get('/api/ping', (_req, res) => {
