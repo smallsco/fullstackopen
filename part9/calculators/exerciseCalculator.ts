@@ -8,23 +8,13 @@ interface ExerciseReport {
   average: number;
 }
 
-const calculateExercises = (args: Array<string>): ExerciseReport => {
-  // Sanity-Check Input and cast to numbers
-  if (args.length < 4) {
-    throw new Error('Incorrect number of arguments');
-  }
-  const targetHours = Number(args[2]);
-  const weeklyReport: Array<number> = args.slice(3, args.length).map(hours => Number(hours));
-  if (isNaN(targetHours)) {
-    throw new Error('Target hours must be a number');
-  }
-  weeklyReport.forEach(hours => {
-    if (isNaN(hours)) {
-      throw new Error('Weekly report must contain numbers');
-    }
-  });
+export interface ExerciseRequest {
+  daily_exercises: Array<number>;
+  target: number;
+}
 
-  // Calculate Exercise
+// Calculate Exercise
+export const calculateExercises = (targetHours: number, weeklyReport: Array<number>): ExerciseReport => {
   const trainingHours: number = weeklyReport.reduce((prev, current) => prev + current);
   const averageHours: number = trainingHours / weeklyReport.length;
   const success: boolean = averageHours >= targetHours;
@@ -53,4 +43,25 @@ const calculateExercises = (args: Array<string>): ExerciseReport => {
   };
 };
 
-console.log(calculateExercises(process.argv));
+// Calculate exercises using cmd line args if the script was called directly
+if (require.main === module) {
+
+  // Sanity-Check Input and cast to numbers
+  const args: Array<string> = process.argv;
+  if (args.length < 4) {
+    throw new Error('Incorrect number of arguments');
+  }
+  const targetHours = Number(args[2]);
+  const weeklyReport: Array<number> = args.slice(3, args.length).map(hours => Number(hours));
+  if (isNaN(targetHours)) {
+    throw new Error('Target hours must be a number');
+  }
+  weeklyReport.forEach(hours => {
+    if (isNaN(hours)) {
+      throw new Error('Weekly report must contain numbers');
+    }
+  });
+
+  // Do the exercises calculation
+  console.log(calculateExercises(targetHours, weeklyReport));
+}

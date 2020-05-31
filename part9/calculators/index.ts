@@ -3,9 +3,11 @@ import express, { ErrorRequestHandler } from 'express';
 
 // My Imports
 import { calculateBmi } from './bmiCalculator';
+import { calculateExercises, ExerciseRequest } from './exerciseCalculator';
 
 // Init Express Framework
 const app = express();
+app.use(express.json());
 
 // Routes
 app.get('/hello', (_req, res) => {
@@ -25,6 +27,27 @@ app.get('/bmi', (req, res) => {
   // Do the BMI Calculation
   const bmi: string = calculateBmi(height, weight);
   return res.json({weight, height, bmi});
+});
+app.post('/exercises', (req, res) => {
+  // Sanity Check Input
+  const exreq = req.body as ExerciseRequest;
+  const targetHours = exreq.target;
+  const weeklyReport = exreq.daily_exercises;
+  let mustContainNumbers = false;
+  if (isNaN(targetHours)) {
+    return res.status(400).json({ error: 'Target hours must be a number' });
+  }
+  weeklyReport.forEach(hours => {
+    if (isNaN(hours)) {
+      mustContainNumbers = true;
+    }
+  });
+  if (mustContainNumbers) {
+    return res.status(400).json({ error: 'Weekly report must contain numbers' });
+  }
+
+  // Do the exercise calculation
+  return res.json(calculateExercises(targetHours, weeklyReport));
 });
 
 // Error Handler
