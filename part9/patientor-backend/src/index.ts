@@ -2,6 +2,10 @@
 import express from 'express';
 import cors from 'cors';
 
+// My Imports
+import diagnosesRouter from './routes/diagnoses';
+import patientsRouter from './routes/patients';
+
 // Init Express Framework
 const app = express();
 app.use(cors());  // eslint-disable-line @typescript-eslint/no-unsafe-call
@@ -10,6 +14,8 @@ app.use(cors());  // eslint-disable-line @typescript-eslint/no-unsafe-call
 app.get('/api/ping', (_req, res) => {
   return res.send('pong');
 });
+app.use('/api/diagnoses', diagnosesRouter);
+app.use('/api/patients', patientsRouter);
 
 // Start Server
 const PORT = 3001;
