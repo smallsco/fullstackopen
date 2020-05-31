@@ -1,4 +1,16 @@
-const calculateBmi = (height: number, weight: number): String => {
+const calculateBmi = (args: Array<string>): String => {
+
+  // Sanity Check Inputs
+  if (args.length != 4) {
+    throw new Error('Incorrect number of arguments');
+  }
+  const height: number = Number(args[2]);
+  const weight: number = Number(args[3]);
+  if (isNaN(height) || isNaN(weight)) {
+    throw new Error('Height and Weight must be numbers');
+  }
+
+  // Do the BMI Calculation
   const height_in_metres: number = height / 100;
   const bmi: number = weight / (Math.pow(height_in_metres, 2));
   if (bmi < 18.5) {
@@ -15,4 +27,4 @@ const calculateBmi = (height: number, weight: number): String => {
   }
 }
 
-console.log(calculateBmi(180, 74));
+console.log(calculateBmi(process.argv));
